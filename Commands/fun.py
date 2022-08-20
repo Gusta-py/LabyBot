@@ -179,15 +179,17 @@ class Diversão(commands.Cog):
                 name2 = ctx.author.name
                 name1 = name1
             if 0 <= shipnumber <= 30:
+                title_comment = "Moderado!"
                 comment = "Muito baixo!\n\n {}".format(random.choice(
-                ["Friendzone ;(", 
+                ["Estão na friendzone!", 
                 'Apenas "amigos"', 
-                "Quase não há amor ;(",
+                "Quase não há amor...",
                 "Eu sinto um pouco de amor!",
-                "Ainda estão na friendzone ;(",
+                "Ainda estão na friendzone...",
                 "Não, apenas não!",
                 "Há um pequeno senso de romance de uma pessoa!"]))
             elif 31 <= shipnumber <= 70:
+                title_comment = "Moderado!"
                 comment = "Moderado!\n\n {}".format(random.choice(
                 ["Justo!",
                 "Um pouco de amor está no ar...",
@@ -198,14 +200,16 @@ class Diversão(commands.Cog):
                 "Eu sinto um pouco de potencial!",
                 "Hm... Talvez."]))
             elif 71 <= shipnumber <= 90:
+                title_comment = "Quase perfeito!"
                 comment = "Quase perfeito!\n\n {}".format(random.choice(
-                ["Eu definitivamente posso ver que o amor está no ar",
+                ["Eu definitivamente posso ver que o amor está no ar!",
                 "Eu sinto o amor! Há um sinal de um romance!",
                 "Hm... Será que vai? 👀",
                 "Eu definitivamente posso sentir o amor!",
                 "Isso tem um grande potencial!",
                 "Eu posso ver que o amor está lá! Em algum lugar..."]))
             elif 90 <= shipnumber <= 100:
+                title_comment = "Amor verdadeiro!"
                 comment = "Amor verdadeiro!\n\n {}".format(random.choice(
                 ["É uma combinação!", 
                 "Namorados? KKKKKKKKK, Eles já são casados!", 
@@ -220,7 +224,7 @@ class Diversão(commands.Cog):
                 shipColor = green_color
 
             emb = (disnake.Embed(color=shipColor, \
-                                title=comment, \
+                                title=title_comment, \
                                 description="**{0}** e **{1}** {2}".format(pessoa1.mention, pessoa2.mention, random.choice(
                                 [
                                     ":sparkling_heart:", 
