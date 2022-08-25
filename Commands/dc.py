@@ -1,4 +1,4 @@
-from Config.emojis import error_emoji, confirm_emoji, monitor_emoji, color_emoji, user_joined, role_emoji, id_emoji, users_emoji, calendar_emoji, text_channel_emoji, userinfo_emoji, owner_emoji, notification_emoji, computer_emoji, bot_emoji, online_emoji, idle_emoji, dnd_emoji, offline_emoji, vscode_emoji, python_emoji, memory_emoji, paper_emoji, ping_emoji, maping_emoji, discord_emoji, thumbsup_emoji, loading_emoji, spotify_emoji, info_emoji
+from Config.emojis import error_emoji, confirm_emoji, monitor_emoji, color_emoji, user_joined, role_emoji, id_emoji, users_emoji, calendar_emoji, text_channel_emoji, userinfo_emoji, owner_emoji, notification_emoji, computer_emoji, bot_emoji, online_emoji, idle_emoji, dnd_emoji, offline_emoji, vscode_emoji, python_emoji, memory_emoji, paper_emoji, ping_emoji, maping_emoji, discord_emoji, thumbsup_emoji, loading_emoji, spotify_emoji, info_emoji, arrow_left, arrow_right
 from Config.colors import red_color, green_color, white_color, yellow_color
 from Config.database import levelling_cluster, rep_cluster
 from Config.discloud import api_token, discloudapp_link
@@ -6,9 +6,9 @@ from Config.images import image_failed
 from disnake import Option, OptionType
 from disnake import User, Member
 from disnake.ext import commands
+from typing import Union, List
 from Config.bot import footer
 from disnake import Spotify
-from typing import Union 
 import calendar
 import datetime
 import requests
@@ -25,6 +25,54 @@ cluster1 = pymongo.MongoClient(rep_cluster)
 verificados = cluster1["Discord"]["Reputações"]
 
 token = api_token
+
+
+class Menu(disnake.ui.View):
+    def __init__(self, embeds: List[disnake.Embed], ctx):
+        super().__init__(timeout=None)
+        self.embeds = embeds
+        self.ctx = ctx
+        self.embed_count = 0
+
+        self.prev_page.disabled = True
+
+        for i, embed in enumerate(self.embeds):
+            embed.set_footer(text=f"LabyBot, todos direitos reservados. • Página {i + 1} de {len(self.embeds)}")
+    
+    async def interaction_check(self, interaction: disnake.Interaction):
+        if interaction.user != self.ctx.author:
+            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Apenas {self.ctx.author.mention} pode clicar nesse botão!", timestamp=datetime.datetime.utcnow(), color=red_color)
+            ErrorEmbed.set_footer(text=footer)
+            await interaction.response.send_message(embed=ErrorEmbed, ephemeral=True)
+            return False
+        else:
+            return True
+
+    @disnake.ui.button(emoji=arrow_left, style=disnake.ButtonStyle.secondary)
+    async def prev_page(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
+        self.embed_count -= 1
+        embed = self.embeds[self.embed_count]
+
+        self.next_page.disabled = False
+        if self.embed_count == 0:
+            self.prev_page.disabled = True
+        await interaction.response.edit_message(embed=embed, view=self)
+
+    @disnake.ui.button(label="Apagar", style=disnake.ButtonStyle.red)
+    async def remove(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
+        await interaction.response.defer()
+        await interaction.delete_original_message()
+        self.stop()
+
+    @disnake.ui.button(emoji=arrow_right, style=disnake.ButtonStyle.secondary)
+    async def next_page(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
+        self.embed_count += 1
+        embed = self.embeds[self.embed_count]
+
+        self.prev_page.disabled = False
+        if self.embed_count == len(self.embeds) - 1:
+            self.next_page.disabled = True
+        await interaction.response.edit_message(embed=embed, view=self)
 
 
 class Confirmar(disnake.ui.View):
@@ -60,10 +108,11 @@ class Confirmar(disnake.ui.View):
         self.stop()
 
 class MaisDetalhes(disnake.ui.View):
-    def __init__(self, ctx):
+    def __init__(self, ctx, bot):
         super().__init__(timeout=None)
-        self.value = None
+        self.bot = bot
         self.ctx = ctx
+        self.value = None
 
     
     async def interaction_check(self, interaction: disnake.Interaction):
@@ -77,9 +126,91 @@ class MaisDetalhes(disnake.ui.View):
     
     @disnake.ui.button(label="Mais informações", emoji=info_emoji, custom_id="details_button" ,style=disnake.ButtonStyle.blurple)
     async def detalhes(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
+        membro = interaction.user if interaction.user else self.ctx.author 
+
+        bot_ou_não = "Sim" if membro.bot else "Não"
+        conta_criada = calendar.timegm(membro.created_at.utctimetuple())
+        entrou_server = calendar.timegm(membro.joined_at.utctimetuple())
+        await interaction.channel.trigger_typing()
+
+        view1 = disnake.ui.View()
+        item = disnake.ui.Button(style=disnake.ButtonStyle.grey, label="Abrir avatar no navegador", url=(membro.avatar or membro.default_avatar).url)
+        view1.add_item(item=item)
+
+        busca = verificados.find_one({"id": membro.id})
+        data = busca if busca else {}
+        rep = data.get("reputações", 0)
+
+        stats = levelling.find_one({"id" : membro.id})
+
+        if membro.id == self.ctx.author.id:
+            embed = disnake.Embed(title=f'Suas informações', timestamp=datetime.datetime.utcnow(), color=membro.color)
+        if membro.id == self.bot.user.id:
+            embed = disnake.Embed(title=f'Minhas informações', timestamp=datetime.datetime.utcnow(), color=membro.color)
+        else:
+            embed = disnake.Embed(title=f'{membro} - Informações', timestamp=datetime.datetime.utcnow(), color=membro.color)
+        embed.set_thumbnail(url=(membro.avatar or membro.default_avatar).url)
+        embed.add_field(name=f'{id_emoji} | ID:', value=f'``{membro.id}``')
+        embed.add_field(name=f'{users_emoji} | Nick Completo:', value=f'``{membro}``', inline=False)
+        if membro.id == self.bot.user.id:
+            embed.add_field(name=f"{bot_emoji} | Bot?", value=f"`Sim, eu sou um bot!`", inline=False)
+        else:
+            embed.add_field(name=f"{bot_emoji} | Bot?", value=f"`{bot_ou_não}`", inline=False)
+        if str(membro.status) == "online":
+            embed.add_field(name=f"{online_emoji} | Status", value=f"``Online``", inline=False)
+        if str(membro.status) == "idle":
+            embed.add_field(name=f"{idle_emoji} | Status", value=f"``Ausente``", inline=False)
+        if str(membro.status) == "dnd":
+            embed.add_field(name=f"{dnd_emoji} | Status", value=f"``Não Pertube``", inline=False)
+        if str(membro.status) == "offline":
+            embed.add_field(name=f"{offline_emoji} | Status", value=f"``Offline``", inline=False)
+        embed.add_field(name=f"{calendar_emoji} | No discord desde:", value=f'<t:{conta_criada}:f> | <t:{conta_criada}:R>', inline=False)
+        if membro.id == self.bot.user.id:
+            embed.add_field(name=f'{user_joined} | Entrei em:', value=f'<t:{entrou_server}:f> | <t:{entrou_server}:R>', inline=False)
+        else:
+            embed.add_field(name=f'{user_joined} | Entrou em:', value=f'<t:{entrou_server}:f> | <t:{entrou_server}:R>', inline=False)
+        if stats is None:
+            embed.remove_field(index=1)
+        else:
+            xp = stats["xp"]
+            lvl = 0
+            rank = 0
+            while True:
+                if xp < ((50*(lvl**2))+(50*lvl)):
+                    break
+                lvl += 1
+            xp -= ((50*((lvl-1)**2))+(50*(lvl-1)))
+            rankings = levelling.find().sort("xp", -1)
+            for x in rankings:
+                rank +=1
+                if stats["id"] == x["id"]:
+                    break
+            embed.add_field(name="⭐ | XP:", value=f"Nível ``{lvl}`` ({stats['xp']} de XP)", inline=False)
+            if rep == 0:
+                embed.remove_field(index=1)
+            else:
+                embed.add_field(name=f"{thumbsup_emoji} | Reps:", value=f"``{rep}`` Reputações", inline=False)
+            if len(membro.roles) == 1:
+                embed.add_field(name=":tada: | Cargos:", value="``Sem cargos.``", inline=False)
+                embed.set_footer(text=footer)
+                if membro.avatar is None:
+                    await interaction.response.send_message(embed=embed)
+                else:
+                    await interaction.response.send_message(embed=embed, view=view1)
+            else:
+                sorted_roles = sorted([role for role in membro.roles[1:]], key=lambda x: x.position, reverse=True)
+                if len(membro.roles) > 2 :
+                    embed.add_field(name=f':tada: | {len(membro.roles)-1} Cargos:', value=', '.join(role.mention for role in sorted_roles), inline=False)
+                else:
+                    embed.add_field(name=f':tada: | {len(membro.roles)-1} Cargo:', value=', '.join(role.mention for role in sorted_roles), inline=False)
+                embed.set_footer(text=footer)
+
+                if membro.avatar is None:
+                    await interaction.response.send_message(embed=embed)
+                else:
+                    await interaction.response.send_message(embed=embed, view=view1)
         self.value = True
         self.stop()
-
 
 class Discord(commands.Cog):
 
@@ -115,56 +246,28 @@ class Discord(commands.Cog):
     @commands.slash_command(description="「📌 Discord」Mostra as informações de um usuário", options=[Option('usuário', 'Usúario para eu mostrar as informações', OptionType.user)])
     @commands.guild_only()
     async def userinfo(self, ctx, usuário: Union[Member, User] = None):
-        membro = usuário if usuário else ctx.author     
-                    
-        bot_ou_não = "Sim" if membro.bot else "Não"
-        conta_criada = calendar.timegm(membro.created_at.utctimetuple())
-        await ctx.channel.trigger_typing()
+        try:
+            membro = usuário if usuário else ctx.author     
+                        
+            bot_ou_não = "Sim" if membro.bot else "Não"
+            conta_criada = calendar.timegm(membro.created_at.utctimetuple())
+            await ctx.channel.trigger_typing()
 
-        view1 = disnake.ui.View()
-        item = disnake.ui.Button(style=disnake.ButtonStyle.grey, label="Abrir avatar no navegador", url=(membro.avatar or membro.default_avatar).url)
-        view1.add_item(item=item)
+            view1 = disnake.ui.View()
+            item = disnake.ui.Button(style=disnake.ButtonStyle.grey, label="Abrir avatar no navegador", url=(membro.avatar or membro.default_avatar).url)
+            view1.add_item(item=item)
 
-        busca = verificados.find_one({"id": membro.id})
-        data = busca if busca else {}
-        rep = data.get("reputações", 0)
+            busca = verificados.find_one({"id": membro.id})
+            data = busca if busca else {}
+            rep = data.get("reputações", 0)
 
-        stats = levelling.find_one({"id" : membro.id})
+            stats = levelling.find_one({"id" : membro.id})
 
-        if isinstance(membro, Member):
-            entrou_server = calendar.timegm(membro.joined_at.utctimetuple())
-            
-            view = MaisDetalhes(ctx)
+            view = MaisDetalhes(ctx, self.bot)
 
-            if membro.id == ctx.author.id:
-                embed = disnake.Embed(title=f'Suas informações', timestamp=datetime.datetime.utcnow(), color=membro.color)
-            if membro.id == self.bot.user.id:
-                embed = disnake.Embed(title=f'Minhas informações', timestamp=datetime.datetime.utcnow(), color=membro.color)
-            else:
-                embed = disnake.Embed(title=f'{membro} - Informações', timestamp=datetime.datetime.utcnow(), color=membro.color)
-            embed.set_thumbnail(url=(membro.avatar or membro.default_avatar).url)
-            embed.add_field(name=f'{id_emoji} | ID:', value=f'``{membro.id}``', inline=False)
-            embed.add_field(name=f'{users_emoji} | Nick Completo:', value=f'``{membro}``', inline=False)
-            if membro.id == self.bot.user.id:
-                embed.add_field(name=f"{bot_emoji} | Bot?", value=f"`Sim, eu sou um bot!`")
-            else:
-                embed.add_field(name=f"{bot_emoji} | Bot?", value=f"`{bot_ou_não}`")
-            if str(membro.status) == "online":
-                embed.add_field(name=f"{online_emoji} | Status", value=f"``Online``", inline=False)
-            if str(membro.status) == "idle":
-                embed.add_field(name=f"{idle_emoji} | Status", value=f"``Ausente``", inline=False)
-            if str(membro.status) == "dnd":
-                embed.add_field(name=f"{dnd_emoji} | Status", value=f"``Não Pertube``", inline=False)
-            if str(membro.status) == "offline":
-                embed.add_field(name=f"{offline_emoji} | Status", value=f"``Offline``", inline=False)
-            embed.add_field(name=f"{calendar_emoji} | No discord desde:", value=f'<t:{conta_criada}:f> | <t:{conta_criada}:R>', inline=False)
-            embed.add_field(name=f'{user_joined} | Entrou em:', value=f'<t:{entrou_server}:f> | <t:{entrou_server}:R>', inline=False)
-            embed.set_footer(text=footer)
-            view.message = await ctx.send(embed=embed, view=view)
-            await view.wait()
-            msg = await ctx.original_message()
-
-            if view.value:
+            if isinstance(membro, Member):
+                entrou_server = calendar.timegm(membro.joined_at.utctimetuple())
+                
                 if membro.id == ctx.author.id:
                     embed = disnake.Embed(title=f'Suas informações', timestamp=datetime.datetime.utcnow(), color=membro.color)
                 if membro.id == self.bot.user.id:
@@ -172,12 +275,12 @@ class Discord(commands.Cog):
                 else:
                     embed = disnake.Embed(title=f'{membro} - Informações', timestamp=datetime.datetime.utcnow(), color=membro.color)
                 embed.set_thumbnail(url=(membro.avatar or membro.default_avatar).url)
-                embed.add_field(name=f'{id_emoji} | ID:', value=f'``{membro.id}``')
+                embed.add_field(name=f'{id_emoji} | ID:', value=f'``{membro.id}``', inline=False)
                 embed.add_field(name=f'{users_emoji} | Nick Completo:', value=f'``{membro}``', inline=False)
                 if membro.id == self.bot.user.id:
-                    embed.add_field(name=f"{bot_emoji} | Bot?", value=f"`Sim, eu sou um bot!`", inline=False)
+                    embed.add_field(name=f"{bot_emoji} | Bot?", value=f"`Sim, eu sou um bot!`")
                 else:
-                    embed.add_field(name=f"{bot_emoji} | Bot?", value=f"`{bot_ou_não}`", inline=False)
+                    embed.add_field(name=f"{bot_emoji} | Bot?", value=f"`{bot_ou_não}`")
                 if str(membro.status) == "online":
                     embed.add_field(name=f"{online_emoji} | Status", value=f"``Online``", inline=False)
                 if str(membro.status) == "idle":
@@ -187,10 +290,19 @@ class Discord(commands.Cog):
                 if str(membro.status) == "offline":
                     embed.add_field(name=f"{offline_emoji} | Status", value=f"``Offline``", inline=False)
                 embed.add_field(name=f"{calendar_emoji} | No discord desde:", value=f'<t:{conta_criada}:f> | <t:{conta_criada}:R>', inline=False)
-                if membro.id == self.bot.user.id:
-                    embed.add_field(name=f'{user_joined} | Entrei em:', value=f'<t:{entrou_server}:f> | <t:{entrou_server}:R>', inline=False)
+                embed.add_field(name=f'{user_joined} | Entrou em:', value=f'<t:{entrou_server}:f> | <t:{entrou_server}:R>', inline=False)
+                embed.set_footer(text=footer)
+                await ctx.send(embed=embed, view=view)           
+            if isinstance(membro, User):
+                embed = disnake.Embed(title=f'{membro} - Informações', timestamp=datetime.datetime.utcnow(), color=membro.color)
+                if membro.avatar is None:
+                    embed.set_thumbnail(url=membro.default_avatar.url)
                 else:
-                    embed.add_field(name=f'{user_joined} | Entrou em:', value=f'<t:{entrou_server}:f> | <t:{entrou_server}:R>', inline=False)
+                    embed.set_thumbnail(url=membro.avatar.url)
+                embed.add_field(name=f'{id_emoji} | ID:', value=f'``{membro.id}``', inline=False)
+                embed.add_field(name=f'{users_emoji} | Nick Completo:', value=f'``{membro}``', inline=False)
+                embed.add_field(name=f"{bot_emoji} | Bot?", value=f"`{bot_ou_não}`")
+                embed.add_field(name=f"{calendar_emoji} | No discord desde:", value=f'<t:{conta_criada}:f> | <t:{conta_criada}:R>', inline=False)
                 if stats is None:
                     embed.remove_field(index=1)
                 else:
@@ -208,73 +320,17 @@ class Discord(commands.Cog):
                         if stats["id"] == x["id"]:
                             break
                     embed.add_field(name="⭐ | XP:", value=f"Nível ``{lvl}`` ({stats['xp']} de XP)", inline=False)
-                if rep == 0:
-                    embed.remove_field(index=1)
-                else:
-                    embed.add_field(name=f"{thumbsup_emoji} | Reps:", value=f"``{rep}`` Reputações", inline=False)
-                if len(membro.roles) == 1:
-                    embed.add_field(name=":tada: | Cargos:", value="``Sem cargos.``", inline=False)
-                    embed.set_footer(text=footer)
-
-                    if membro.avatar is None:
-                        await ctx.send(embed=embed)
-                        await msg.delete()
+                    if rep == 0:
+                        embed.remove_field(index=1)
                     else:
-                        await ctx.send(embed=embed, view=view1)
-                        await msg.delete()
+                        embed.add_field(name=f"{thumbsup_emoji} | Reps:", value=f"``{rep}`` Reputações", inline=False)
+                embed.set_footer(text=footer)
+                if membro.avatar is None:
+                    await ctx.send(embed=embed)
                 else:
-                    sorted_roles = sorted([role for role in membro.roles[1:]], key=lambda x: x.position, reverse=True)
-                    if len(membro.roles) > 2 :
-                        embed.add_field(name=f':tada: | {len(membro.roles)-1} Cargos:', value=', '.join(role.mention for role in sorted_roles), inline=False)
-                    else:
-                        embed.add_field(name=f':tada: | {len(membro.roles)-1} Cargo:', value=', '.join(role.mention for role in sorted_roles), inline=False)
-                    embed.set_footer(text=footer)
-
-                    if membro.avatar is None:
-                        await ctx.send(embed=embed)
-                        await msg.delete()
-                    else:
-                        await ctx.send(embed=embed, view=view1)
-                        await msg.delete()
-            else:
-                return
-            
-        if isinstance(membro, User):
-            embed = disnake.Embed(title=f'{membro} - Informações', timestamp=datetime.datetime.utcnow(), color=membro.color)
-            if membro.avatar is None:
-                embed.set_thumbnail(url=membro.default_avatar.url)
-            else:
-                embed.set_thumbnail(url=membro.avatar.url)
-            embed.add_field(name=f'{id_emoji} | ID:', value=f'``{membro.id}``', inline=False)
-            embed.add_field(name=f'{users_emoji} | Nick Completo:', value=f'``{membro}``', inline=False)
-            embed.add_field(name=f"{bot_emoji} | Bot?", value=f"`{bot_ou_não}`")
-            embed.add_field(name=f"{calendar_emoji} | No discord desde:", value=f'<t:{conta_criada}:f> | <t:{conta_criada}:R>', inline=False)
-            if stats is None:
-                embed.remove_field(index=1)
-            else:
-                xp = stats["xp"]
-                lvl = 0
-                rank = 0
-                while True:
-                    if xp < ((50*(lvl**2))+(50*lvl)):
-                        break
-                    lvl += 1
-                xp -= ((50*((lvl-1)**2))+(50*(lvl-1)))
-                rankings = levelling.find().sort("xp", -1)
-                for x in rankings:
-                    rank +=1
-                    if stats["id"] == x["id"]:
-                        break
-                embed.add_field(name="⭐ | XP:", value=f"Nível ``{lvl}`` ({stats['xp']} de XP)", inline=False)
-                if rep == 0:
-                    embed.remove_field(index=1)
-                else:
-                    embed.add_field(name=f"{thumbsup_emoji} | Reps:", value=f"``{rep}`` Reputações", inline=False)
-            embed.set_footer(text=footer)
-            if membro.avatar is None:
-                await ctx.send(embed=embed)
-            else:
-                await ctx.send(embed=embed, view=view1)
+                    await ctx.send(embed=embed, view=view1)
+        except Exception as e:
+            print(e)
     
     @commands.slash_command(description="「📌 Discord」Agradeça algum usuário por ter lhe ajudado no servidor!", options=[Option('usuário', 'Usuário para ser reputado', OptionType.user, required=True)])
     @commands.guild_only()
@@ -498,9 +554,16 @@ class Discord(commands.Cog):
             embed.add_field(name=f"{users_emoji} | Exibe separadamente na lista de membros?", value=f"`{separadamente}`", inline=False)
             embed.add_field(name=f"{users_emoji} | Quantidade de membros com esse cargo:", value=f"`{len(cargo.members)}`", inline=False)
             embed.add_field(name=f"{color_emoji} | Cor do cargo:", value=f"`{cargo.color}`", inline=False)
-            embed.add_field(name=f"{computer_emoji} | Permissões:", value=total, inline=False)
             embed.set_footer(text=footer)
-            await ctx.send(embed=embed)
+
+            embed1 = disnake.Embed(title=f"Informações do cargo: ``{cargo.name}``", description=f"{computer_emoji} **| Permissões:**\n {total}", timestamp=datetime.datetime.utcnow(), color=white_color)
+            #embed1.add_field(name=f"{computer_emoji} | Permissões:", value=total, inline=False)
+            embed1.set_footer(text=footer)
+
+            valid_embeds = [embed, embed1]
+
+            await ctx.send(embed=valid_embeds[0], view=Menu(valid_embeds, ctx))
+
         except Exception as e:
             print(e)
 
@@ -677,8 +740,6 @@ class Discord(commands.Cog):
         #pingEmbed.description = f'Estou com uma latência de ``{round(self.bot.latency * 1000)}ms``!'
         #pingEmbed.set_footer(text=footer)
         #await ctx.send(embed=pingEmbed)
-
-    
     
     #@commands.slash_command()
     #async def fosforo(self, ctx):

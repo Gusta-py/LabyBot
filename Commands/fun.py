@@ -1,4 +1,5 @@
-from Config.emojis import error_emoji, text_channel_emoji, arrow_left, arrow_right, coincrown_emoji, coinface_emoji
+from xml.dom import EMPTY_NAMESPACE
+from Config.emojis import error_emoji, text_channel_emoji, arrow_left, arrow_right, coincrown_emoji, coinface_emoji, scissor_emoji, rock_emoji, paper_emoji
 from Config.colors import red_color, green_color, white_color, yellow_color, purple_color
 from Commands.utils import generate_puzzle_embed, random_puzzle_id
 from Config.links import openweather_link
@@ -18,6 +19,141 @@ lista_cancela = ["ser lindo(a) demais", "ser ruim", "ser gado(a) demais", "ser f
 crystall_list = ["Vai incomodar outra pessoa, obrigado.", "Não.", "Sim.", "Claro que não!", "Claro que sim!", "Talvez...", "Será?", "Provavelmente.", "Claro que é po.", "Claro que não po."]
 url = openweather_link
 
+
+class Dropdown(disnake.ui.Select):
+    def __init__(self, bot):
+        self.bot = bot
+
+        options = [
+            disnake.SelectOption(label="Pedra", emoji=rock_emoji),
+            disnake.SelectOption(label="Papel", emoji=paper_emoji),
+            disnake.SelectOption(label="Tesoura", emoji=scissor_emoji),
+        ]
+        super().__init__(
+            placeholder="Escolha um item",
+            min_values=1,
+            max_values=1,
+            custom_id="jokenpo_select",
+            options=options,
+        )
+        
+    async def callback(self, interaction: disnake.MessageInteraction):
+        await interaction.response.defer()
+        itens = "Pedra", "Papel", "Tesoura"
+        computers_answer = random.choice(itens)
+        if self.values[0] == "Pedra":
+                
+            answer = "Pedra"
+
+            if computers_answer == "Papel":
+                if answer == "Pedra":
+                    BotWinEmbed1 = disnake.Embed(title="Pedra, Papel ou Tesoura?", timestamp=datetime.datetime.now(), color=white_color)
+                    BotWinEmbed1.add_field(name="Você escolheu:", value=f'``{answer}``')
+                    BotWinEmbed1.add_field(name="Eu escolhi:", value=f'``{computers_answer}``', inline=False)
+                    BotWinEmbed1.add_field(name="Resultado do jogo:", value="``Eu ganhei!``", inline=False)
+                    BotWinEmbed1.set_thumbnail(url=self.bot.user.avatar.url)
+                    BotWinEmbed1.set_footer(text=footer)
+                    await interaction.edit_original_message(embed=BotWinEmbed1)
+
+            if computers_answer == "Tesoura":
+                if answer == "Pedra":
+                    MemberWinEmbed2 = disnake.Embed(title="Pedra, Papel ou Tesoura?", timestamp=datetime.datetime.now(), color=white_color)
+                    MemberWinEmbed2.add_field(name="Você escolheu:", value=f'``{answer}``')
+                    MemberWinEmbed2.add_field(name="Eu escolhi:", value=f'``{computers_answer}``', inline=False)
+                    MemberWinEmbed2.add_field(name="Resultado do jogo:", value="``Você ganhou!``", inline=False)
+                    MemberWinEmbed2.set_thumbnail(url=self.bot.user.avatar.url)
+                    MemberWinEmbed2.set_footer(text=footer)
+                    await interaction.edit_original_message(embed=MemberWinEmbed2)
+                
+            if computers_answer == answer:
+                EmpateEmbed = disnake.Embed(title="Pedra, Papel ou Tesoura?", timestamp=datetime.datetime.now(), color=white_color)
+                EmpateEmbed.add_field(name="Você escolheu:", value=f'``{answer}``')
+                EmpateEmbed.add_field(name="Eu escolhi:", value=f'``{answer}``', inline=False)
+                EmpateEmbed.add_field(name="Resultado do jogo:", value="``Empate!``", inline=False)
+                EmpateEmbed.set_thumbnail(url=self.bot.user.avatar.url)
+                EmpateEmbed.set_footer(text=footer)
+                await interaction.edit_original_message(embed=EmpateEmbed)
+
+        if self.values[0] == "Papel":
+
+            answer = "Papel"
+
+            if computers_answer == "Pedra":
+                if answer == "Papel":
+                    MemberWinEmbed1 = disnake.Embed(title="Pedra, Papel ou Tesoura?", timestamp=datetime.datetime.now(), color=white_color)
+                    MemberWinEmbed1.add_field(name="Você escolheu:", value=f'``{answer}``')
+                    MemberWinEmbed1.add_field(name="Eu escolhi:", value=f'``{computers_answer}``', inline=False)
+                    MemberWinEmbed1.add_field(name="Resultado do jogo:", value="``Você ganhou!``", inline=False)
+                    MemberWinEmbed1.set_thumbnail(url=self.bot.user.avatar.url)
+                    MemberWinEmbed1.set_footer(text=footer)
+                    await interaction.edit_original_message(embed=MemberWinEmbed1, view=None)
+                
+            if computers_answer == "Tesoura":
+                if answer == "Papel":
+                    BotWinEmbed3 = disnake.Embed(title="Pedra, Papel ou Tesoura?", timestamp=datetime.datetime.now(), color=white_color)
+                    BotWinEmbed3.add_field(name="Você escolheu:", value=f'``{answer}``')
+                    BotWinEmbed3.add_field(name="Eu escolhi:", value=f'``{computers_answer}``', inline=False)
+                    BotWinEmbed3.add_field(name="Resultado do jogo:", value="``Eu ganhei!``", inline=False)
+                    BotWinEmbed3.set_thumbnail(url=self.bot.user.avatar.url)
+                    BotWinEmbed3.set_footer(text=footer)
+                    await interaction.edit_original_message(embed=BotWinEmbed3, view=None)
+                
+            if computers_answer == answer:
+                EmpateEmbed = disnake.Embed(title="Pedra, Papel ou Tesoura?", timestamp=datetime.datetime.now(), color=white_color)
+                EmpateEmbed.add_field(name="Você escolheu:", value=f'``{answer}``')
+                EmpateEmbed.add_field(name="Eu escolhi:", value=f'``{answer}``', inline=False)
+                EmpateEmbed.add_field(name="Resultado do jogo:", value="``Empate!``", inline=False)
+                EmpateEmbed.set_thumbnail(url=self.bot.user.avatar.url)
+                EmpateEmbed.set_footer(text=footer)
+                await interaction.edit_original_message(embed=EmpateEmbed, view=None)
+
+        if self.values[0] == "Tesoura":
+                
+            answer = "Tesoura"
+
+            if computers_answer == "Pedra":
+                if answer == "Tesoura":
+                    BotWinEmbed2 = disnake.Embed(title="Pedra, Papel ou Tesoura?", timestamp=datetime.datetime.now(), color=white_color)
+                    BotWinEmbed2.add_field(name="Você escolheu:", value=f'``{answer}``')
+                    BotWinEmbed2.add_field(name="Eu escolhi:", value=f'``{computers_answer}``', inline=False)
+                    BotWinEmbed2.add_field(name="Resultado do jogo:", value="``Eu ganhei!``", inline=False)
+                    BotWinEmbed2.set_thumbnail(url=self.bot.user.avatar.url)
+                    BotWinEmbed2.set_footer(text=footer)
+                    await interaction.edit_original_message(embed=BotWinEmbed2, view=None)
+                
+            if computers_answer == "Papel":
+                if answer == "Tesoura":
+                    MemberWinEmbed3 = disnake.Embed(title="Pedra, Papel ou Tesoura?", timestamp=datetime.datetime.now(), color=white_color)
+                    MemberWinEmbed3.add_field(name="Você escolheu:", value=f'``{answer}``')
+                    MemberWinEmbed3.add_field(name="Eu escolhi:", value=f'``{computers_answer}``', inline=False)
+                    MemberWinEmbed3.add_field(name="Resultado do jogo:", value="``Você ganhou!``", inline=False)
+                    MemberWinEmbed3.set_thumbnail(url=self.bot.user.avatar.url)
+                    MemberWinEmbed3.set_footer(text=footer)
+                    await interaction.edit_original_message(embed=MemberWinEmbed3, view=None)
+                
+            if computers_answer == answer:
+                EmpateEmbed = disnake.Embed(title="Pedra, Papel ou Tesoura?", timestamp=datetime.datetime.now(), color=white_color)
+                EmpateEmbed.add_field(name="Você escolheu:", value=f'``{answer}``')
+                EmpateEmbed.add_field(name="Eu escolhi:", value=f'``{answer}``', inline=False)
+                EmpateEmbed.add_field(name="Resultado do jogo:", value="``Empate!``", inline=False)
+                EmpateEmbed.set_thumbnail(url=self.bot.user.avatar.url)
+                EmpateEmbed.set_footer(text=footer)
+                await interaction.edit_original_message(embed=EmpateEmbed, view=None)
+
+class DropdownView(disnake.ui.View):
+    def __init__(self, bot):
+        self.bot = bot
+        super().__init__(timeout=None)
+
+        self.add_item(Dropdown(bot=self.bot))
+
+    async def interaction_check(self, interaction: disnake.Interaction):
+        if interaction.author.mention not in interaction.message.embeds[0].description:
+            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não pode utilizar esse painel! Caso VOCÊ queira jogar comigo, use o comando ``/jokenpo``.", timestamp=datetime.datetime.utcnow(), color=red_color)
+            ErrorEmbed.set_footer(text=footer)
+            await interaction.response.send_message(embed=ErrorEmbed, ephemeral=True)
+        else:
+            return True
 
 class Menu(disnake.ui.View):
     def __init__(self, embeds: List[disnake.Embed], ctx):
@@ -96,23 +232,25 @@ class Pegar(disnake.ui.View):
         self.value = True
         self.stop()
 
-#class Apagar(disnake.ui.View):
-    #def __init__(self):
-        #super().__init__(timeout=300)
-        #self.value = None
-
-    #@disnake.ui.button(label="Apagar mensagem", emoji="<:lixo:924690705539006514>", custom_id="delete_how_to_play_button", style=disnake.ButtonStyle.grey)
-    #async def delete2(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        #await interaction.response.defer()
-        #self.value = True
-        #self.stop()
-
-
 class Diversão(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-    
+        bot.loop.create_task(self.prepare_view())
+
+    async def prepare_view(self):
+        await self.bot.wait_until_ready()
+        self.bot.add_view(DropdownView(self.bot))
+        
+    @commands.slash_command(description="「😂 Diversão」Jogue pedra, papel e tesoura comigo!")
+    @commands.guild_only()
+    async def jokenpo(self, ctx):
+        embed = disnake.Embed(title='Pedra, Papel ou Tesoura?', description=f"||{ctx.author.mention}||\n\nPara começar o jogo, escolha um item no menu abaixo:", color=white_color, timestamp=datetime.datetime.utcnow())
+        embed.set_thumbnail(url=self.bot.user.avatar.url)
+        embed.set_footer(text=footer)
+        await ctx.send(embed=embed, view=DropdownView(self.bot))
+     
+        
     @commands.slash_command(description="「😂 Diversão」Jogue Termo, só que no Discord 😈")
     async def termo(self, interaction: disnake.AppCommandInteraction):
         embed = disnake.Embed(title="Termo, só que no Discord", description="Antes de jogar, você só precisa seguir uma regrinha: A palavra que você colocar **NÃO** pode possuir nenhuma letra em **__caixa alta__** **(Caps Lock)**, caso contrário, o bot irá falar que ela é uma palavra inválida.", timestamp=datetime.datetime.utcnow(), color=white_color)
@@ -247,33 +385,7 @@ class Diversão(commands.Cog):
         embed = disnake.Embed(title="Cara ou Coroa?", description=f"{rancoin}", timestamp=datetime.datetime.now(), color=white_color)
         embed.set_footer(text=footer)
         await ctx.send(embed=embed)
-
-   #@slash_command(description="「😂 Diversão」Crie um sorteio!", options=[Option('tempo', 'Qual será o tempo do sorteio?', required=True), Option('prêmio', 'Qual será o prêmio do sorteio?', required=True), Option('canal', 'Qual canal em que o sorteio irá acontecer?', OptionType.CHANNEL, required=True), Option('reação', 'Qual vai ser a reação que será usada no sorteio?', required=True)])
-    #async def giveaway(self, ctx, tempo, *, prêmio, canal: discord.TextChannel, reação):
-        #if (not ctx.author.guild_permissions.manage_channels):
-            #ErrorEmbed = discord.Embed(title=f"{error_emoji} | Erro!", description=f"{ctx.author.mention} Você não tem permissão para utilizar este comando! Para utilizá-lo, você precisa ter permissão para ``Gerenciar Canais``!", timestamp=datetime.datetime.now(), color=0xFF0000)
-            #ErrorEmbed.set_footer(text=footer)
-            #await ctx.send(embed=ErrorEmbed)
-            #return
-        #await ctx.send(f'O sorteio foi criado com sucesso no canal {canal.mention}!')
-        #gvembed = discord.Embed(title=f'Novo sorteio começando!', description=f'🎁 | **Prêmio: {prêmio};\n<:892799472478871613:916835300213403699> | Tempo: {tempo};\n{owner_emoji} | Criado por: {ctx.author.mention}.', color=0xfafafa)
-        #time_convert = {"s": 1, "m":60, "h":3600, "d":86400}
-        #gawtime = int(tempo[0]) * time_convert[tempo[-1]]
-        #gvembed.set_footer(text=f"Sorteio acaba em {tempo}.")
-        #gaw_msg = await canal.send(embed=gvembed)
-
-        #await gaw_msg.add_reaction(f'{reação}')
-        #await asyncio.sleep(gawtime)
-        
-        #new_gaw_msg = await ctx.channel.fetch_message(gaw_msg.id)
-        #users = await new_gaw_msg.reactions[0].users().flatten()
-        #users.pop(users.index(self.bot.user))
-
-        #vencedor = random.choices(users)
-        
-        #await ctx.send(f"🎉 | O membro {vencedor.mention} ganhou o sorteio de **{prêmio}**! Parabéns!")
-        #await gaw_msg.delete()
-                
+              
     @commands.slash_command(description="「😂 Diversão」Veja a previsão do tempo de uma cidade por comando!", options=[Option('cidade', 'Cidade que você quer ver o clima', required=True)])
     @commands.guild_only()
     async def clima(self, ctx, *, cidade: str):
@@ -315,75 +427,7 @@ class Diversão(commands.Cog):
         valid_embeds = [embed, embed1]
 
         await ctx.send(embed=valid_embeds[0], view=Menu(valid_embeds, ctx))
-
-                    
-    @commands.slash_command(description="「😂 Diversão」Jogue pedra, papel e tesoura comigo!", options=[Option('escolha', 'Item que você quer utilizar', required=True)])
-    @commands.guild_only()
-    async def jokenpo(self, ctx, escolha):
-        answer = escolha.lower()
-        choices = ["pedra", "papel", "tesoura"]
-        computers_answer = random.choice(choices)
-        if answer not in choices:
-            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description="Isso não é uma opção válida! Por favor use ``pedra``, ``papel`` ou ``tesoura``!", timestamp=datetime.datetime.now(), color=red_color)
-            ErrorEmbed.set_footer(text=footer)
-            await ctx.send(embed=ErrorEmbed, ephemeral=True)
-        else:
-            if computers_answer == answer:
-                EmpateEmbed = disnake.Embed(title="Pedra, Papel ou Tesoura?", timestamp=datetime.datetime.now(), color=white_color)
-                EmpateEmbed.add_field(name="Você escolheu:", value=f'``{answer}``')
-                EmpateEmbed.add_field(name="Eu escolhi:", value=f'``{answer}``', inline=False)
-                EmpateEmbed.add_field(name="Resultado do jogo:", value="``Empate!``", inline=False)
-                EmpateEmbed.set_footer(text=footer)
-                await ctx.send(embed=EmpateEmbed)
-            if computers_answer == "pedra":
-                if answer == "papel":
-                    MemberWinEmbed1 = disnake.Embed(title="Pedra, Papel ou Tesoura?", timestamp=datetime.datetime.now(), color=white_color)
-                    MemberWinEmbed1.add_field(name="Você escolheu:", value=f'``{answer}``')
-                    MemberWinEmbed1.add_field(name="Eu escolhi:", value=f'``{computers_answer}``', inline=False)
-                    MemberWinEmbed1.add_field(name="Resultado do jogo:", value="``Você ganhou!``", inline=False)
-                    MemberWinEmbed1.set_footer(text=footer)
-                    await ctx.send(embed=MemberWinEmbed1)
-            if computers_answer == "papel":
-                if answer == "pedra":
-                    BotWinEmbed1 = disnake.Embed(title="Pedra, Papel ou Tesoura?", timestamp=datetime.datetime.now(), color=white_color)
-                    BotWinEmbed1.add_field(name="Você escolheu:", value=f'``{answer}``')
-                    BotWinEmbed1.add_field(name="Eu escolhi:", value=f'``{computers_answer}``', inline=False)
-                    BotWinEmbed1.add_field(name="Resultado do jogo:", value="``Eu ganhei!``", inline=False)
-                    BotWinEmbed1.set_footer(text=footer)
-                    await ctx.send(embed=BotWinEmbed1)
-            if computers_answer == "tesoura":
-                if answer == "pedra":
-                    MemberWinEmbed2 = disnake.Embed(title="Pedra, Papel ou Tesoura?", timestamp=datetime.datetime.now(), color=white_color)
-                    MemberWinEmbed2.add_field(name="Você escolheu:", value=f'``{answer}``')
-                    MemberWinEmbed2.add_field(name="Eu escolhi:", value=f'``{computers_answer}``', inline=False)
-                    MemberWinEmbed2.add_field(name="Resultado do jogo:", value="``Você ganhou!``", inline=False)
-                    MemberWinEmbed2.set_footer(text=footer)
-                    await ctx.send(embed=MemberWinEmbed2) 
-            if computers_answer == "pedra":
-                if answer == "tesoura":
-                    BotWinEmbed2 = disnake.Embed(title="Pedra, Papel ou Tesoura?", timestamp=datetime.datetime.now(), color=white_color)
-                    BotWinEmbed2.add_field(name="Você escolheu:", value=f'``{answer}``')
-                    BotWinEmbed2.add_field(name="Eu escolhi:", value=f'``{computers_answer}``', inline=False)
-                    BotWinEmbed2.add_field(name="Resultado do jogo:", value="``Eu ganhei!``", inline=False)
-                    BotWinEmbed2.set_footer(text=footer)
-                    await ctx.send(embed=BotWinEmbed2)
-            if computers_answer == "papel":
-                if answer == "tesoura":
-                    MemberWinEmbed3 = disnake.Embed(title="Pedra, Papel ou Tesoura?", timestamp=datetime.datetime.now(), color=white_color)
-                    MemberWinEmbed3.add_field(name="Você escolheu:", value=f'``{answer}``')
-                    MemberWinEmbed3.add_field(name="Eu escolhi:", value=f'``{computers_answer}``', inline=False)
-                    MemberWinEmbed3.add_field(name="Resultado do jogo:", value="``Você ganhou!``", inline=False)
-                    MemberWinEmbed3.set_footer(text=footer)
-                    await ctx.send(embed=MemberWinEmbed3)
-            if computers_answer == "tesoura":
-                if answer == "papel":
-                    BotWinEmbed3 = disnake.Embed(title="Pedra, Papel ou Tesoura?", timestamp=datetime.datetime.now(), color=white_color)
-                    BotWinEmbed3.add_field(name="Você escolheu:", value=f'``{answer}``')
-                    BotWinEmbed3.add_field(name="Eu escolhi:", value=f'``{computers_answer}``', inline=False)
-                    BotWinEmbed3.add_field(name="Resultado do jogo:", value="``Eu ganhei!``", inline=False)
-                    BotWinEmbed3.set_footer(text=footer)
-                    await ctx.send(embed=BotWinEmbed3)
-                              
+                          
     @commands.slash_command(description="「😂 Diversão」Faça eu falar algo!", options=[Option('mensagem', 'Mensagem que você quer que eu fale' , required=True)])
     @commands.guild_only()
     async def say(self, ctx, *, mensagem):
@@ -465,8 +509,34 @@ class Diversão(commands.Cog):
             embed = generate_puzzle_embed(inter.author, puzzle_id)
             await inter.response.edit_message(view=None)
             await inter.followup.send("O jogo foi iniciado!", delete_after=5)
-            await inter.followup.send("Para dar uma resposta, basta dar reply na mensagem.",embed=embed)
+            await inter.followup.send("Para responder, basta dar reply na mensagem.",embed=embed)
             return
+    
+    #@slash_command(description="「😂 Diversão」Crie um sorteio!", options=[Option('tempo', 'Qual será o tempo do sorteio?', required=True), Option('prêmio', 'Qual será o prêmio do sorteio?', required=True), Option('canal', 'Qual canal em que o sorteio irá acontecer?', OptionType.CHANNEL, required=True), Option('reação', 'Qual vai ser a reação que será usada no sorteio?', required=True)])
+    #async def giveaway(self, ctx, tempo, *, prêmio, canal: discord.TextChannel, reação):
+        #if (not ctx.author.guild_permissions.manage_channels):
+            #ErrorEmbed = discord.Embed(title=f"{error_emoji} | Erro!", description=f"{ctx.author.mention} Você não tem permissão para utilizar este comando! Para utilizá-lo, você precisa ter permissão para ``Gerenciar Canais``!", timestamp=datetime.datetime.now(), color=0xFF0000)
+            #ErrorEmbed.set_footer(text=footer)
+            #await ctx.send(embed=ErrorEmbed)
+            #return
+        #await ctx.send(f'O sorteio foi criado com sucesso no canal {canal.mention}!')
+        #gvembed = discord.Embed(title=f'Novo sorteio começando!', description=f'🎁 | **Prêmio: {prêmio};\n<:892799472478871613:916835300213403699> | Tempo: {tempo};\n{owner_emoji} | Criado por: {ctx.author.mention}.', color=0xfafafa)
+        #time_convert = {"s": 1, "m":60, "h":3600, "d":86400}
+        #gawtime = int(tempo[0]) * time_convert[tempo[-1]]
+        #gvembed.set_footer(text=f"Sorteio acaba em {tempo}.")
+        #gaw_msg = await canal.send(embed=gvembed)
+
+        #await gaw_msg.add_reaction(f'{reação}')
+        #await asyncio.sleep(gawtime)
+        
+        #new_gaw_msg = await ctx.channel.fetch_message(gaw_msg.id)
+        #users = await new_gaw_msg.reactions[0].users().flatten()
+        #users.pop(users.index(self.bot.user))
+
+        #vencedor = random.choices(users)
+        
+        #await ctx.send(f"🎉 | O membro {vencedor.mention} ganhou o sorteio de **{prêmio}**! Parabéns!")
+        #await gaw_msg.delete()
          
 def setup(bot):
     bot.add_cog(Diversão(bot))

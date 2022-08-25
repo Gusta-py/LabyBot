@@ -68,7 +68,7 @@ class Suporte(commands.Cog):
             item3 = disnake.ui.Button(label="Meu website", style=disnake.ButtonStyle.blurple, url=labysite_link)
             view1.add_item(item=item3)
 
-        embed = disnake.Embed(title="Novidades do dia 20/08/2022",description=f'``Novidades do dia 20/08/2022``\n\n{config_emoji} | O comando ``/clear`` foi atualizado\n{config_emoji} | O comando ``/userinfo`` foi atualizado\n{config_emoji} | Alguns emojis do bot foram trocados.\n{warning_emoji} | Uma atualização massiva foi feita no ficheiro do BOT, alguns comandos, botões ou menus podem não funcionar corretamente.\n\n**Caso encontre algum bug, por favor reportar usando o comando ``/bug``.**', timestamp=datetime.datetime.utcnow(), color=green_color)
+        embed = disnake.Embed(title="Novidades do dia 24/08/2022",description=f'``Novidades do dia 24/08/2022``\n\n{config_emoji} | Os comandos ``/roleinfo`` e ``/jokenpo`` foram atualizados.\n\n**Caso encontre algum bug, por favor reportar usando o comando ``/bug``.**', timestamp=datetime.datetime.utcnow(), color=green_color)
         embed.set_thumbnail(url=self.bot.user.avatar.url)
         embed.set_footer(text=footer)
         await ctx.send(embed=embed, view=view1)
