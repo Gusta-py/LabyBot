@@ -1,7 +1,5 @@
-from xml.dom import EMPTY_NAMESPACE
 from Config.emojis import error_emoji, text_channel_emoji, arrow_left, arrow_right, coincrown_emoji, coinface_emoji, scissor_emoji, rock_emoji, paper_emoji
 from Config.colors import red_color, green_color, white_color, yellow_color, purple_color
-from Commands.utils import generate_puzzle_embed, random_puzzle_id
 from Config.links import openweather_link
 from disnake import Option, OptionType
 from disnake.ext import commands
@@ -21,8 +19,7 @@ url = openweather_link
 
 
 class Dropdown(disnake.ui.Select):
-    def __init__(self, bot):
-        self.bot = bot
+    def __init__(self):
 
         options = [
             disnake.SelectOption(label="Pedra", emoji=rock_emoji),
@@ -141,11 +138,10 @@ class Dropdown(disnake.ui.Select):
                 await interaction.edit_original_message(embed=EmpateEmbed, view=None)
 
 class DropdownView(disnake.ui.View):
-    def __init__(self, bot):
-        self.bot = bot
+    def __init__(self):
         super().__init__(timeout=None)
 
-        self.add_item(Dropdown(bot=self.bot))
+        self.add_item(Dropdown())
 
     async def interaction_check(self, interaction: disnake.Interaction):
         if interaction.author.mention not in interaction.message.embeds[0].description:
@@ -240,23 +236,25 @@ class Diversão(commands.Cog):
 
     async def prepare_view(self):
         await self.bot.wait_until_ready()
-        self.bot.add_view(DropdownView(self.bot))
+        self.bot.add_view(DropdownView())
         
     @commands.slash_command(description="「😂 Diversão」Jogue pedra, papel e tesoura comigo!")
     @commands.guild_only()
     async def jokenpo(self, ctx):
-        embed = disnake.Embed(title='Pedra, Papel ou Tesoura?', description=f"||{ctx.author.mention}||\n\nPara começar o jogo, escolha um item no menu abaixo:", color=white_color, timestamp=datetime.datetime.utcnow())
-        embed.set_thumbnail(url=self.bot.user.avatar.url)
-        embed.set_footer(text=footer)
-        await ctx.send(embed=embed, view=DropdownView(self.bot))
-     
+        try:
+            embed = disnake.Embed(title='Pedra, Papel ou Tesoura?', description=f"||{ctx.author.mention}||\n\nPara começar o jogo, escolha um item no menu abaixo:", color=white_color, timestamp=datetime.datetime.utcnow())
+            embed.set_thumbnail(url=self.bot.user.avatar.url)
+            embed.set_footer(text=footer)
+            await ctx.send(embed=embed, view=DropdownView())
+        except Exception as e:
+            await ctx.send(e)
         
     @commands.slash_command(description="「😂 Diversão」Jogue Termo, só que no Discord 😈")
     async def termo(self, interaction: disnake.AppCommandInteraction):
         embed = disnake.Embed(title="Termo, só que no Discord", description="Antes de jogar, você só precisa seguir uma regrinha: A palavra que você colocar **NÃO** pode possuir nenhuma letra em **__caixa alta__** **(Caps Lock)**, caso contrário, o bot irá falar que ela é uma palavra inválida.", timestamp=datetime.datetime.utcnow(), color=white_color)
         embed.set_thumbnail(url=interaction.author.avatar.url)
         embed.set_footer(text=footer)
-        await interaction.response.send_message(embed=embed, components=[disnake.ui.Button(label="Ok, iniciar!", custom_id="initiate_game_green", style=disnake.ButtonStyle.green), disnake.ui.Button(label="Como jogar", custom_id="how_to_play_blurple", style=disnake.ButtonStyle.blurple), disnake.ui.Button(label="Link do jogo original", url=f"https://term.ooo/")])
+        await interaction.response.send_message(embed=embed, components=[disnake.ui.Button(label="Ok, iniciar!", custom_id="start_game_green", style=disnake.ButtonStyle.green), disnake.ui.Button(label="Como jogar", custom_id="how_to_play_blurple", style=disnake.ButtonStyle.blurple), disnake.ui.Button(label="Link do jogo original", url=f"https://term.ooo/")])
 
     @commands.slash_command(description="「😂 Diversão」Hora do café!")
     async def cafe(self, ctx):
@@ -495,22 +493,6 @@ class Diversão(commands.Cog):
         CancelEmbed = disnake.Embed(title="Eita! 👀", description=f"{usuário.mention} foi cancelado por {random.choice(lista_cancela)}.", timestamp=datetime.datetime.now(), color=usuário.color)
         CancelEmbed.set_footer(text=footer)
         await ctx.send(embed=CancelEmbed)
-    
-    @commands.Cog.listener()
-    async def on_button_click(self, inter: disnake.MessageInteraction):
-        if inter.data.custom_id == "how_to_play_blurple":
-            await inter.response.send_message("As instruções foram enviados para sua DM.", ephemeral=True)
-            embed = disnake.Embed(title="Como jogar", description="Descubra a palavra correta em ``6`` tentativas. A cada tentativa, as peças mostram o quão perto você está da palavra certa. Exemplo:\n\n<:1000176813236043877:1000177693574299759><:1000176813236043877:1000179029648887958><:1000176813236043877:1000179559880196197><:1000176813236043877:1000179138008711251><:1000176813236043877:1000179255319212106>\n\nA letra <:1000176813236043877:1000177693574299759> faz parte da palavra e está na posição correta.\n\n<:1000176813236043877:1000179075815591957><:1000176813236043877:1000179029648887958><:1000181470096269403:1000182084935106692><:1000176813236043877:1000179053690626138><:1000176813236043877:1000179465189601320>\n\nA letra <:1000181470096269403:1000182084935106692> faz parte da palavra mas em outra posição.\n\n<:1000176813236043877:1000178124862005258><:1000176813236043877:1000177645947998348><:1000176813236043877:1000178101407457370><:1000176813236043877:1000178124862005258><:1000176813236043877:1000179465189601320>\n\n A letra <:1000176813236043877:1000179465189601320> não faz parte da palavra.\n\nAo contrário do jogo original, os acentos não são preenchidos automaticamente, pois não há **nenhuma** palavra com acentos e você pode jogar quando quiser! Em vez de poder jogar uma vez por dia.\n\nAs palavras podem possuir letras repetidas e para responder, basta dar reply na mensagem.", timestamp=datetime.datetime.utcnow(), color=0xfafafa)
-            embed.set_thumbnail(url=self.bot.user.avatar.url)
-            embed.set_footer(text=footer)
-            await inter.author.send(embed=embed, delete_after=120)
-        if inter.data.custom_id == "initiate_game_green":
-            puzzle_id = random_puzzle_id()
-            embed = generate_puzzle_embed(inter.author, puzzle_id)
-            await inter.response.edit_message(view=None)
-            await inter.followup.send("O jogo foi iniciado!", delete_after=5)
-            await inter.followup.send("Para responder, basta dar reply na mensagem.",embed=embed)
-            return
     
     #@slash_command(description="「😂 Diversão」Crie um sorteio!", options=[Option('tempo', 'Qual será o tempo do sorteio?', required=True), Option('prêmio', 'Qual será o prêmio do sorteio?', required=True), Option('canal', 'Qual canal em que o sorteio irá acontecer?', OptionType.CHANNEL, required=True), Option('reação', 'Qual vai ser a reação que será usada no sorteio?', required=True)])
     #async def giveaway(self, ctx, tempo, *, prêmio, canal: discord.TextChannel, reação):
