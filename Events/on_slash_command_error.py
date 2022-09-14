@@ -23,7 +23,12 @@ class onSlashError(commands.Cog):
             ErrorEmbed.set_footer(text=footer)
             await ctx.send(embed=ErrorEmbed, ephemeral=True)
             return
-        
-    
+        if isinstance(error, commands.CommandOnCooldown): 
+            tempo = str(datetime.timedelta(seconds= int(error.retry_after)))
+            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você já utilizou esse comando recentemente! Por favor espere ``{tempo}`` para utilizar o comando novamente.", timestamp=datetime.datetime.utcnow(), color=red_color)
+            ErrorEmbed.set_footer(text=footer)
+            await ctx.send(embed=ErrorEmbed, ephemeral=True)
+            return  
+            
 def setup(bot):
     bot.add_cog(onSlashError(bot))

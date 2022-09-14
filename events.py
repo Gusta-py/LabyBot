@@ -1,4 +1,5 @@
 from disnake.ext import commands, tasks
+import sqlite3
 import disnake
 import random
 
@@ -11,6 +12,11 @@ class Eventos(commands.Cog):
         
     @commands.Cog.listener()
     async def on_ready(self):
+        db = sqlite3.connect('eco.sqlite')
+        cursor = db.cursor()
+        cursor.execute('''CREATE TABLE IF NOT EXISTS eco (
+            user_id INTERGER, carteira INTERGER, banco INTERGER
+        )''')
 
         @tasks.loop(seconds=10)
         async def status():
