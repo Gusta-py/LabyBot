@@ -26,7 +26,7 @@ class Eventos(commands.Cog):
             for guild in self.bot.guilds:
                 members += guild.member_count - 1
 
-            poss = 1, 2, 3, 4, 5
+            poss = 1, 2, 3, 4, 5, 6
 
             esch = random.choice(poss)
             #before = time.monotonic()
@@ -43,7 +43,8 @@ class Eventos(commands.Cog):
                 await self.bot.change_presence(activity=disnake.Game(name="❓ | /help "))
             elif esch == 5:
                 await self.bot.change_presence(activity=disnake.Activity(type=disnake.ActivityType.watching, name=f"💻 | {len(self.bot.guilds)} Servidores!"))
-
+            elif esch == 6:
+                await self.bot.change_presence(activity=disnake.Activity(type=disnake.ActivityType.watching, name=f"💳 | Novo sistema de economia!"))
         status.start()
         print(f" - [APLICAÇÃO] Online com uma latência de {int(self.bot.latency * 1000)}ms.")
 
