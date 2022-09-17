@@ -368,7 +368,7 @@ class Moderação(commands.Cog):
         else:
             quantia = int(quantia)+1
             apagadas = await ctx.channel.purge(limit=int(quantia))   
-            clearEmbed = disnake.Embed(title='Chat limpo! :wastebasket:', description=f'Você apagou ``{len(apagadas)-1} mensagens`` com sucesso no chat.', timestamp=datetime.datetime.utcnow(), color=green_color)
+            clearEmbed = disnake.Embed(title='Chat limpo! :wastebasket:', description=f'Você apagou ``{len(apagadas)-1}`` mensagens com sucesso no chat.', timestamp=datetime.datetime.utcnow(), color=green_color)
             clearEmbed.set_footer(text=f'Já podem conversar novamente! | {footer}')
             await ctx.send(embed=clearEmbed)
 

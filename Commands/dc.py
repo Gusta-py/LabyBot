@@ -728,7 +728,7 @@ class Discord(commands.Cog):
         msg = await ctx.channel.send("Latência calculada!")
         await asyncio.sleep(1)
         await msg.delete()
-        pingEmbed = disnake.Embed(title="Pong!", description=f"{ping_emoji} | Minha latência: ``{(self.bot.latency * 1000)}ms``", timestamp=datetime.datetime.utcnow(), color=white_color)
+        pingEmbed = disnake.Embed(title="Pong!", description=f"{ping_emoji} | Minha latência: ``{int(self.bot.latency * 1000)}ms``", timestamp=datetime.datetime.utcnow(), color=white_color)
         pingEmbed.set_footer(text=footer)
         await ctx.send(embed=pingEmbed)
     
