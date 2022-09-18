@@ -1,16 +1,18 @@
 from Config.emojis import error_emoji, confirm_emoji, userinfo_emoji, owner_emoji, terminal_emoji, host_emoji, memory_emoji, restart_emoji
-from Config.discloud import api_token, discloud_link, discloudsite_link, discloudapp_link, discloudlogs_link, discloudrestart_link
+from Config.discloud import api_token, discloud_link, discloudsite_link
 from Config.colors import red_color, blurple_color, white_color, black_color, yellow_color, green_color
 from Config.images import discloudbanner_image, discloudlogo_image
 from translate import Translator
 from disnake.ext import commands
 from Config.bot import footer
 import datetime
+import discloud
 import requests
 import asyncio
 import disnake
 
 
+client = discloud.Client(api_token)
 token = api_token
 
 
@@ -19,7 +21,6 @@ class Confirm(disnake.ui.View):
         super().__init__(timeout=30)
         self.value = None
         self.ctx = ctx
-
     
     async def interaction_check(self, interaction: disnake.Interaction):
         if interaction.user != self.ctx.author:
@@ -41,7 +42,7 @@ class Host(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         #self.bot.restart = self.bot.loop.create_task(self.restart())
-
+    
 
     @commands.slash_command(description="「🛠 Hospedagem」Seu bot 24h online agora!")
     @commands.guild_only()
@@ -66,58 +67,69 @@ class Host(commands.Cog):
     @commands.guild_only()
     async def status(self, interaction: disnake.AppCommandInteraction, escolhas: str = commands.Param(choices=[disnake.OptionChoice(name="Aplicação", value="app"), disnake.OptionChoice(name="Logs (Apenas moderadores do LabyBot)", value="logs"), disnake.OptionChoice(name="Usuário (Apenas dono)", value="user")])):
         if (escolhas == 'app'):
-            await interaction.response.defer()
+            try:
+                await interaction.response.defer()
 
-            bot = requests.get(discloudapp_link, headers={"api-token": token}).json()
-            cpu = bot["cpu"]
-            ram = bot["memory"]
-            restart = bot["last_restart"]
-            translator= Translator(to_lang="pt")
-            translation = translator.translate(restart)
+                bot = await client.app_info(target=908870304909115432)
+                # cpu = bot["cpu"]
+                # ram = bot["memory"]
+                # restart = bot["last_restart"]
+                # translator= Translator(to_lang="pt")
+                # print(translator)
+                # translation = translator.translate(bot.)
+                # print(translator, translation)
 
-            StatusEmbed = disnake.Embed(title=f"Opa {interaction.author.name}! Veja aqui as minhas informações.", description=f'{userinfo_emoji} | Nome/ID: **LabyBot#3926/908870304909115432**\n{host_emoji} | CPU: **{cpu}**\n{memory_emoji} | RAM: **{ram}**\n{restart_emoji} | Última reinicialização: **Há {translation}**', timestamp=datetime.datetime.utcnow(), color=white_color)
-            StatusEmbed.set_thumbnail(url=self.bot.user.avatar.url)
-            StatusEmbed.set_footer(text=footer)
-            await interaction.followup.send(embed=StatusEmbed)
+                StatusEmbed = disnake.Embed(title=f"Opa {interaction.author.name}! Veja aqui as minhas informações.", description=f'{userinfo_emoji} | Nome/ID: **LabyBot#3926/908870304909115432**\n{host_emoji} | CPU: **{bot.cpu}**\n{memory_emoji} | RAM: **{bot.memory.using}**\n{restart_emoji} | Última reinicialização: **Há {bot.last_restart}**', timestamp=datetime.datetime.utcnow(), color=white_color)
+                StatusEmbed.set_thumbnail(url=self.bot.user.avatar.url)
+                StatusEmbed.set_footer(text=footer)
+                await interaction.followup.send(embed=StatusEmbed)
+            except Exception as e:
+                print(e)
 
         if (escolhas == 'logs'):
-            await interaction.response.defer(ephemeral=True)
+            try:
+                await interaction.response.defer(ephemeral=True)
 
-            logs = requests.get(discloudlogs_link, headers={"api-token": token}).json()
-            complete = logs["link"]
-            texto = logs["logs"]
-            whitelist = [892802037186711553, 937052487427440760, 916716814627667979, 936738889744416798]
-            tem = disnake.utils.find(lambda r: r.id in whitelist, interaction.author.roles)
+                logs = await client.logs(target=908870304909115432)
+                whitelist = [892802037186711553, 937052487427440760, 916716814627667979, 936738889744416798]
+                tem = disnake.utils.find(lambda r: r.id in whitelist, interaction.author.roles)
 
-            if tem: 
-                v = disnake.ui.View()
-                item = disnake.ui.Button(style=disnake.ButtonStyle.blurple, label="Terminal completo", emoji=terminal_emoji, url=complete)
-                v.add_item(item=item)
+                if tem: 
+                    v = disnake.ui.View()
+                    item = disnake.ui.Button(style=disnake.ButtonStyle.blurple, label="Terminal completo", emoji=terminal_emoji, url=logs.logs)
+                    v.add_item(item=item)
 
-                LogsEmbed = disnake.Embed(title=f"{terminal_emoji} | Últimos 1800 caracteres do terminal:", description=f"```json\n{texto}```", timestamp=datetime.datetime.utcnow(), color=black_color)
-                LogsEmbed.set_footer(text=footer)
-                await interaction.followup.send(embed=LogsEmbed, view=v, ephemeral=True)
-            else:
-                if interaction.guild.id == 892799472478871613:
-                    ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não tem o cargo necessário para utilizar esse comando!", timestamp=datetime.datetime.utcnow(), color=red_color)
-                    ErrorEmbed.set_footer(text=footer)
-                    await interaction.followup.send(embed=ErrorEmbed, ephemeral=True)
+                    LogsEmbed = disnake.Embed(title=f"{terminal_emoji} | Últimos 1800 caracteres do terminal:", description=f"```json\n{logs.small_logs}```", timestamp=datetime.datetime.utcnow(), color=black_color)
+                    LogsEmbed.set_footer(text=footer)
+                    await interaction.followup.send(embed=LogsEmbed, ephemeral=True)
                 else:
-                    ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Apenas certas pessoas do meu servidor que podem utilizar esse comando!", timestamp=datetime.datetime.utcnow(), color=red_color)
-                    ErrorEmbed.set_footer(text=footer)
-                    await interaction.followup.send(embed=ErrorEmbed, ephemeral=True)
+                    if interaction.guild.id == 892799472478871613:
+                        ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não tem o cargo necessário para utilizar esse comando!", timestamp=datetime.datetime.utcnow(), color=red_color)
+                        ErrorEmbed.set_footer(text=footer)
+                        await interaction.followup.send(embed=ErrorEmbed, ephemeral=True)
+                    else:
+                        ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Apenas certas pessoas do meu servidor que podem utilizar esse comando!", timestamp=datetime.datetime.utcnow(), color=red_color)
+                        ErrorEmbed.set_footer(text=footer)
+                        await interaction.followup.send(embed=ErrorEmbed, ephemeral=True)
+            except Exception as e:
+                print(e)
             
         if (escolhas == 'user'):
-            await interaction.response.defer(ephemeral=True)
-            if interaction.author.id == 901498839981236235:
-                embed = disnake.Embed(title=f"{userinfo_emoji} | Informações do seu plano", description=f"{owner_emoji} | Plano: ``Free``\n<:892799472478871613:916835300213403699> | Tempo restante: ``∞``.", timestamp=datetime.datetime.utcnow(), color=white_color)
-                embed.set_footer(text=footer)
-                await interaction.followup.send(embed=embed, ephemeral=True)
-            else:
-                ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Apenas o dono do bot pode ver essa categoria!", timestamp=datetime.datetime.utcnow(), color=red_color)
-                ErrorEmbed.set_footer(text=footer)
-                await interaction.followup.send(embed=ErrorEmbed, ephemeral=True)
-                return
+            try:
+                await interaction.response.defer(ephemeral=True)
+                #user = await client.user_info()
+                if interaction.author.id == 901498839981236235:
+                    embed = disnake.Embed(title=f"{userinfo_emoji} | Informações do seu plano", description=f"{owner_emoji} | Plano: ``Free``\n<:892799472478871613:916835300213403699> | Tempo restante: ``∞``.", timestamp=datetime.datetime.utcnow(), color=white_color)
+                    embed.set_footer(text=footer)
+                    await interaction.followup.send(embed=embed, ephemeral=True)
+                    #print(user.plan, user.plan.expires_in)
+                else:
+                    ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Apenas o dono do bot pode ver essa categoria!", timestamp=datetime.datetime.utcnow(), color=red_color)
+                    ErrorEmbed.set_footer(text=footer)
+                    await interaction.followup.send(embed=ErrorEmbed, ephemeral=True)
+                    return
+            except Exception as e:
+                print(e)
             #userinfo = requests.get(disclouduser_link, headers={"api-token": token}).json()
             #plano = userinfo["plan"]
             #tempo_dias = userinfo['lastDataLeft']['days']
@@ -169,7 +181,7 @@ class Host(commands.Cog):
                 msg2 = await channel.send(embed=embed)
 
             try:
-                result = requests.post(discloudrestart_link, headers={"api-token": token}).json()
+                result = await client.restart(target=908870304909115432)
             except Exception as e:
                 print(e)
 

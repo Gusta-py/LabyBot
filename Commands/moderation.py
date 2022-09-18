@@ -373,6 +373,7 @@ class Moderação(commands.Cog):
             await ctx.send(embed=clearEmbed)
 
             await asyncio.sleep(10)
+            return
         apagadas = await ctx.channel.purge(limit=int(quantia)) 
         if not apagadas:
             ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Eu não posso apagar mensagens de um canal que não tem mensagens!", timestamp=datetime.datetime.utcnow(), color=green_color)

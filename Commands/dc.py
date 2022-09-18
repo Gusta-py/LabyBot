@@ -1,15 +1,16 @@
 from Config.emojis import error_emoji, confirm_emoji, monitor_emoji, color_emoji, user_joined, role_emoji, id_emoji, users_emoji, calendar_emoji, text_channel_emoji, userinfo_emoji, owner_emoji, notification_emoji, computer_emoji, bot_emoji, online_emoji, idle_emoji, dnd_emoji, offline_emoji, vscode_emoji, python_emoji, memory_emoji, paper_emoji, ping_emoji, maping_emoji, discord_emoji, thumbsup_emoji, loading_emoji, spotify_emoji, info_emoji, arrow_left, arrow_right
 from Config.colors import red_color, green_color, white_color, yellow_color
 from Config.database import levelling_cluster, rep_cluster
-from Config.discloud import api_token, discloudapp_link
 from Config.images import image_failed
 from disnake import Option, OptionType
+from Config.discloud import api_token
 from disnake import User, Member
 from disnake.ext import commands
 from typing import Union, List
 from Config.bot import footer
 from disnake import Spotify
 import calendar
+import discloud
 import datetime
 import requests
 import disnake
@@ -24,7 +25,7 @@ levelling = cluster["Discord"]["Níveis"]
 cluster1 = pymongo.MongoClient(rep_cluster)
 verificados = cluster1["Discord"]["Reputações"]
 
-token = api_token
+client = discloud.Client(api_token)
 
 
 class Menu(disnake.ui.View):
@@ -660,14 +661,13 @@ class Discord(commands.Cog):
                 members += guild.member_count - 1
             servers = len(ctx.bot.guilds)
 
-            bt = requests.get(discloudapp_link, headers={"api-token": token}).json()
-            ram = bt["memory"]
+            bot = await client.app_info(target=908870304909115432)
 
             BotEmbed = disnake.Embed(title='Olá eu sou o LabyBot!', description=f'Olá {ctx.author.mention}! me chamo LabyBot, mas pode me chamar de Laby! sou um bot simples e em beta para o discord! Veja abaixo minhas informações atualizadas!', color=white_color, timestamp=datetime.datetime.utcnow())
             BotEmbed.set_thumbnail(url=self.bot.user.avatar.url)
             BotEmbed.add_field(name=f'{vscode_emoji} | Programado em:', value='``Visual Studio Code (Python)``')
             BotEmbed.add_field(name=f'{python_emoji} | Python:', value=f'``3.10.6``', inline=False)
-            BotEmbed.add_field(name=f"{memory_emoji} | Memória", value=f"``{ram}``", inline=False)
+            BotEmbed.add_field(name=f"{memory_emoji} | Memória", value=f"``{bot.memory.using}``", inline=False)
             BotEmbed.add_field(name=f'{paper_emoji} | Comandos:', value=f'``{len(self.bot.global_slash_commands)}``', inline=False)
             BotEmbed.add_field(name=f'{ping_emoji} | Ping:', value=f'``{round(self.bot.latency * 1000)}``', inline=False)
             BotEmbed.add_field(name=f"{maping_emoji} | Minha data de nascimento:", value=f"<t:{int(tempo)}:F> | <t:{int(tempo)}:R>")

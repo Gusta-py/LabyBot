@@ -1,17 +1,15 @@
 from Config.emojis import vscode_emoji, python_emoji, paper_emoji, config1_emoji, config_emoji, memory_emoji
 from Config.links import botadd_link, labyserver_link, labysite_link
-from Config.discloud import discloudapp_link
 from Config.discloud import api_token
 from Config.colors import white_color
 from disnake.ext import commands
 from Config.bot import footer
-import requests
+import discloud
 import datetime
 import disnake
 
 
-token = api_token
-
+client = discloud.Client(api_token)
 
 class onMessagePing(commands.Cog):
 
@@ -28,8 +26,7 @@ class onMessagePing(commands.Cog):
                     members += guild.member_count - 1
 
                 serverCount = len(self.bot.guilds)
-                bt = requests.get(discloudapp_link, headers={"api-token": token}).json()
-                ram = bt["memory"]
+                bot = await client.app_info(target=908870304909115432)
 
                 view1 = disnake.ui.View()
                 item = disnake.ui.Button(label="Me adicione!", style=disnake.ButtonStyle.blurple, url=botadd_link)
@@ -56,14 +53,14 @@ class onMessagePing(commands.Cog):
                 mentionEmbed.add_field(name=f'{config1_emoji} | Prefixo:', value="``/``")
                 mentionEmbed.add_field(name=f'{vscode_emoji} | Programado em:', value='``Visual Studio Code (Python)``', inline=False)
                 mentionEmbed.add_field(name=f'{python_emoji} | Python:', value=f'``3.10.6``', inline=False )
-                mentionEmbed.add_field(name=f"{memory_emoji} | Memória", value=f"``{ram}``", inline=False)
+                mentionEmbed.add_field(name=f"{memory_emoji} | Memória", value=f"``{bot.memory.using}``", inline=False)
                 mentionEmbed.add_field(name=f'{paper_emoji} | Comandos:', value=f'``{len(self.bot.global_slash_commands)}`` Comandos!', inline=False)
                 mentionEmbed.add_field(name=f"{config_emoji} | Estou em...", value=f"``{serverCount}`` Servidores com um total de ``{members}`` amigos!")
                 mentionEmbed.set_thumbnail(url=self.bot.user.avatar.url)
                 mentionEmbed.set_footer(text=footer)
                 await message.channel.send(embed=mentionEmbed, view=view1, delete_after=100)
         except Exception as e:
-            await print(e)
+            print(e)
                         
 def setup(bot):
     bot.add_cog(onMessagePing(bot))
