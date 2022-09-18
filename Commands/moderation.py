@@ -85,7 +85,7 @@ class Moderação(commands.Cog):
             await ctx.send(embed=ErrorEmbed, ephemeral=True)
             await asyncio.sleep(3)
             await msg.delete()
-            
+            return
         elif view.value:
             BanEmbed = disnake.Embed(title=f'{confirm_emoji} | Membro banido!', description=f"O membro {membro.mention} foi banido com sucesso!", timestamp=datetime.datetime.utcnow(), color=green_color)
             BanEmbed.add_field(name="Membro banido:", value=f"{membro.mention}")
@@ -99,6 +99,7 @@ class Moderação(commands.Cog):
             await ctx.channel.send(embed=BanEmbed)
             await asyncio.sleep(4)
             await msg.delete()
+            return
         else:
             ErrorEmbed = disnake.Embed(title=f"{confirm_emoji} | Banimento cancelado!", description=f"O banimento do membro {membro.mention} foi cancelado com sucesso!", timestamp=datetime.datetime.utcnow(), color=green_color)
             ErrorEmbed.set_footer(text=footer)
@@ -107,6 +108,7 @@ class Moderação(commands.Cog):
             await msg2.delete()
             await asyncio.sleep(4)
             await msg.delete()
+            return
 
     @commands.slash_command(description="「🔧 Moderação」Desbane uma pessoa que estava no servidor", options=[Option('usuário', 'ID do usuário para ser desbanido', OptionType.user, required=True)])
     @commands.guild_only()
@@ -151,7 +153,7 @@ class Moderação(commands.Cog):
             await ctx.send(embed=ErrorEmbed, ephemeral=True)
             await asyncio.sleep(3)
             await msg.delete()
-
+            return
         elif view.value:
             for ban in banned_users:
                 if usuário.id == ban.user.id:
@@ -161,6 +163,7 @@ class Moderação(commands.Cog):
                     UnbanEmbed.add_field(name="Quem desbaniu?", value=f"{ctx.author.mention}", inline=False)
                     UnbanEmbed.set_footer(text=footer)
                     await ctx.send(embed=UnbanEmbed)
+                    return
         else:
             ErrorEmbed = disnake.Embed(title=f"{confirm_emoji} | Unban cancelado!", description=f"O unban do usuário {usuário.mention} foi cancelado com sucesso!", timestamp=datetime.datetime.utcnow(), color=green_color)
             ErrorEmbed.set_footer(text=footer)
@@ -169,6 +172,7 @@ class Moderação(commands.Cog):
             await msg2.delete()
             await asyncio.sleep(4)
             await msg.delete()
+            return
 
     
     @commands.slash_command(description="「🔧 Moderação」Expulsa um membro do servidor",  options=[Option('membro', 'Membro para ser expulso', OptionType.user, required=True) , Option('motivo', 'Motivo da expulsão', required=True)])
@@ -211,6 +215,7 @@ class Moderação(commands.Cog):
             await ctx.send(embed=ErrorEmbed, ephemeral=True)
             await asyncio.sleep(3)
             await msg.delete()
+            return
         elif view.value:
             KickEmbed = disnake.Embed(title=f"{confirm_emoji} | Membro expulso!", description=f"O membro {membro.mention} foi expulso com sucesso!", timestamp=datetime.datetime.utcnow(), color=green_color)
             KickEmbed.add_field(name="Membro expulso:", value=f"{membro.mention}")
@@ -222,6 +227,7 @@ class Moderação(commands.Cog):
             KickEmbed.set_footer(text=footer)
             await ctx.send(embed=KickEmbed)
             await membro.kick(reason=motivo)
+            return
         else:
             ErrorEmbed = disnake.Embed(title=f"{confirm_emoji} | Expulsão cancelada!", description=f"A expulsão do membro {membro.mention} foi cancelado com sucesso!", timestamp=datetime.datetime.utcnow(), color=green_color)
             ErrorEmbed.set_footer(text=footer)
@@ -229,7 +235,8 @@ class Moderação(commands.Cog):
             await asyncio.sleep(10)
             await msg2.delete()
             await asyncio.sleep(4)
-            await msg.delete()    
+            await msg.delete()   
+            return 
     
     @commands.slash_command(description="「🔧 Moderação」Adicione um cargo em um membro por comando!", options=[Option('membro', 'Membro para ter o cargo adicionado', OptionType.user, required=True), Option('cargo', 'Cargo para ser adicionado no membro', OptionType.role, required=True)])
     @commands.guild_only()
@@ -258,11 +265,13 @@ class Moderação(commands.Cog):
             await ctx.send(embed=ErrorEmbed, ephemeral=True)
             await asyncio.sleep(3)
             await msg.delete()
+            return
         elif view.value:
             await membro.add_roles(cargo)
             AddCargoEmbed = disnake.Embed(title=f"{confirm_emoji} | Cargo adicionado com sucesso!", description=f"O cargo {cargo.mention} foi adicionado com sucesso no membro {membro.mention}.", timestamp=datetime.datetime.utcnow(), color=membro.color)
             AddCargoEmbed.set_footer(text=footer)
             await ctx.send(embed=AddCargoEmbed) 
+            return
         else:
             ErrorEmbed = disnake.Embed(title=f"{confirm_emoji} | Adição cancelada!", description=f"A adição do cargo {cargo.mention} no membro {membro.mention} foi cancelada com sucesso!", timestamp=datetime.datetime.utcnow(), color=red_color)
             ErrorEmbed.set_footer(text=footer)
@@ -271,6 +280,7 @@ class Moderação(commands.Cog):
             await msg2.delete()
             await asyncio.sleep(4)
             await msg.delete()    
+            return
     
     @commands.slash_command(description="「🔧 Moderação」Remova um cargo de um membro por comando!", options=[Option('membro', 'Membro para ter o cargo removido', OptionType.user, required=True), Option('cargo', 'Cargo para ser removido do membro', OptionType.role, required=True)])
     @commands.guild_only()
@@ -299,11 +309,13 @@ class Moderação(commands.Cog):
             await ctx.send(embed=ErrorEmbed, ephemeral=True)
             await asyncio.sleep(3)
             await msg.delete()
+            return
         elif view.value:
             await membro.remove_roles(cargo)
             RemoveCargoEmbed = disnake.Embed(title=f"{confirm_emoji} | Cargo removido com sucesso!", description=f"O cargo {cargo.mention} foi removido com sucesso do membro {membro.mention}.", timestamp=datetime.datetime.utcnow(), color=membro.color)
             RemoveCargoEmbed.set_footer(text=footer)
             await ctx.send(embed=RemoveCargoEmbed)
+            return
         else:
             ErrorEmbed = disnake.Embed(title=f"{confirm_emoji} | Remoção cancelada!", description=f"A remoção do cargo {cargo.mention} no membro {membro.mention} foi cancelada com sucesso!", timestamp=datetime.datetime.utcnow(), color=green_color)
             ErrorEmbed.set_footer(text=footer)
@@ -312,32 +324,7 @@ class Moderação(commands.Cog):
             await msg2.delete()
             await asyncio.sleep(4)
             await msg.delete() 
-    
-    #@commands.slash_command(description="「🔧 Moderação」Bloqueia um chat", options=[Option('canal', 'Canal para ser bloqueado', OptionType.channel, required=True)])
-    #async def lock(self, ctx, canal):
-        #if (not ctx.author.guild_permissions.manage_channels):
-            #ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"{ctx.author.mention} Você não tem permissão para utilizar este comando! Para utilizá-lo, você precisa ter permissão para ``Gerenciar Canais``!", timestamp=datetime.datetime.utcnow(), color=0xFF0000)
-            #ErrorEmbed.set_footer(text=footer)
-            #await ctx.send(embed=ErrorEmbed)
-            #return
-        #channel = canal or ctx.channel
-        #await channel.set_permissions(channel, create_topics=False, attach_files=False, use_slash_commands=False, send_messages=False)
-        #LockEmbed = disnake.Embed(title="Canal bloqueado! 🔓", description=f"O canal {canal.mention} foi bloqueado por: {ctx.author.mention}", timestamp=datetime.datetime.utcnow(), color=0x00FF00)
-        #LockEmbed.set_footer(text=footer)
-        #await ctx.send(embed=LockEmbed)
-        
-    #@commands.slash_command(description="「🔧 Moderação」Desbloqueia um chat", options=[Option('canal', 'Canal para ser bloqueado', OptionType.channel, required=True)])
-    #async def unlock(self, ctx, canal):
-        #if (not ctx.author.guild_permissions.manage_channels):
-            #ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"{ctx.author.mention} Você não tem permissão para utilizar este comando! Para utilizá-lo, você precisa ter permissão para ``Gerenciar Canais``!", timestamp=datetime.datetime.utcnow(), color=0xFF0000)
-            #ErrorEmbed.set_footer(text=footer)
-            #await ctx.send(embed=ErrorEmbed)
-            #return
-        #channel = canal or ctx.channel
-        #await channel.set_permissions()
-        #UnlockEmbed = disnake.Embed(title="Canal desbloqueado! 🔒", description=f"O canal {canal.mention} foi desbloqueado por: {ctx.author.mention}", timestamp=datetime.datetime.utcnow(), color=0x00FF00)
-        #UnlockEmbed.set_footer(text=footer)
-        #await ctx.send(embed=UnlockEmbed)
+            return
 
     @commands.slash_command(description="「🔧 Moderação」Limpe uma quantidade de mensagens", options=[Option('quantia', 'Quantidade de mensagens para serem deletadas', OptionType.number, required=True)])
     @commands.guild_only()
@@ -365,16 +352,6 @@ class Moderação(commands.Cog):
 
             await asyncio.sleep(10)
             return
-        else:
-            quantia = int(quantia)+1
-            apagadas = await ctx.channel.purge(limit=int(quantia))   
-            clearEmbed = disnake.Embed(title='Chat limpo! :wastebasket:', description=f'Você apagou ``{len(apagadas)-1}`` mensagens com sucesso no chat.', timestamp=datetime.datetime.utcnow(), color=green_color)
-            clearEmbed.set_footer(text=f'Já podem conversar novamente! | {footer}')
-            await ctx.send(embed=clearEmbed)
-
-            await asyncio.sleep(10)
-            return
-        apagadas = await ctx.channel.purge(limit=int(quantia)) 
         if not apagadas:
             ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Eu não posso apagar mensagens de um canal que não tem mensagens!", timestamp=datetime.datetime.utcnow(), color=green_color)
             ErrorEmbed.set_footer(text=footer)
@@ -382,8 +359,72 @@ class Moderação(commands.Cog):
 
             await asyncio.sleep(10)
             return
-
+        else:
+            quantia = int(quantia)+1
+            apagadas = await ctx.channel.purge(limit=int(quantia))   
+            clearEmbed = disnake.Embed(title='Chat limpo! :wastebasket:', description=f'Você apagou ``{len(apagadas)-1}`` mensagens com sucesso no chat.', timestamp=datetime.datetime.utcnow(), color=green_color)
+            clearEmbed.set_footer(text=f'Já podem conversar novamente! | {footer}')
+            await ctx.send(embed=clearEmbed, delete_after=10)
+            return
+        
+    @commands.slash_command(description="「🔧 Moderação」Troca o nickname de um membro do seu servidor", options=[Option('membro', 'Membro para ter o nick trocado', OptionType.user, required=True), Option('nick', 'Novo nick do membro.', required=True)])
+    @commands.guild_only()
+    async def changenick(self, ctx, membro, nick):
+        if (not ctx.author.guild_permissions.manage_channels):
+            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não tem permissão para utilizar este comando! Para utilizá-lo, você precisa ter permissão para ``Gerenciar Apelidos``!", timestamp=datetime.datetime.utcnow(), color=red_color)
+            ErrorEmbed.set_footer(text=footer)
+            await ctx.send(embed=ErrorEmbed, ephemeral=True)
+            return
     
+        elif ctx.guild.owner_id == membro.id:
+            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Eu não posso alterar o nick do dono do servidor!", timestamp=datetime.datetime.utcnow(), color=red_color)
+            ErrorEmbed.set_footer(text=footer)
+            await ctx.send(embed=ErrorEmbed, ephemeral=True)
+            return
+        if membro.nick is None:
+            ConfirmEmbed = disnake.Embed(title="Confirmação", description=f"Você tem certeza que deseja atualizar o nickname do membro {membro.mention} para ``{nick}``?", timestamp=datetime.datetime.utcnow(), color=yellow_color)
+            ConfirmEmbed.set_footer(text=footer)
+            view = Confirm(ctx)
+            view.message = await ctx.send(embed=ConfirmEmbed, view=view)
+            await view.wait()
+            return
+        else:
+            ConfirmEmbed = disnake.Embed(title="Confirmação", description=f"Você tem certeza que deseja atualizar o nickname do membro {membro.name} de ``{membro.nick}`` para ``{nick}``?", timestamp=datetime.datetime.utcnow(), color=yellow_color)
+            ConfirmEmbed.set_footer(text=footer)
+            view = Confirm(ctx)
+            view.message = await ctx.send(embed=ConfirmEmbed, view=view)
+            await view.wait()
+            msg = await ctx.original_message()
+        if view.value is None:
+            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"O tempo foi esgotado.", timestamp=datetime.datetime.utcnow(), color=red_color)
+            ErrorEmbed.set_footer(text=footer)
+            await ctx.send(embed=ErrorEmbed, ephemeral=True)
+            await asyncio.sleep(3)
+            await msg.delete()
+            return
+        elif view.value:       
+            if membro.nick is None:
+                nickEmbed = disnake.Embed(title=f'{confirm_emoji} | Nickname alterado! :wrench:', description=f"O nickname de **{membro.name}** foi alterado para ``{nick}``.", timestamp=datetime.datetime.utcnow(), color=green_color)
+                nickEmbed.set_footer(text=footer)
+                await ctx.send(embed=nickEmbed)
+                await membro.edit(nick=nick)
+                return
+            else:
+                nickEmbed = disnake.Embed(title=f"{confirm_emoji} | Nickname alterado! :wrench:", description=f"O nickname de {membro.mention} foi alterado de ``{membro.nick}`` para ``{nick}``", timestamp=datetime.datetime.utcnow(), color=green_color)
+                nickEmbed.set_footer(text=footer)
+                await ctx.send(embed=nickEmbed)
+                await membro.edit(nick=nick)
+                return
+        else:
+            ErrorEmbed = disnake.Embed(title=f"{confirm_emoji} | Atualização cancelada!", description=f"A atualização de nickname do membro {membro.mention} foi cancelada com sucesso!", timestamp=datetime.datetime.utcnow(), color=green_color)
+            ErrorEmbed.set_footer(text=footer)
+            msg2 = await ctx.channel.send(embed=ErrorEmbed)
+            await asyncio.sleep(10)
+            await msg2.delete()
+            await asyncio.sleep(4)
+            await msg.delete()
+            return
+
     #@commands.slash_command(description="「🔧 Moderação」Adiciona slowmode no chat", options=[Option('tempo', 'Tempo do slowmode', OptionType.number, required=True), Option('canal', 'Canal para ter o slowmode setado', OptionType.channel, required=True)])
     #async def slowmode(self, ctx, tempo:int, canal):
         #if (not ctx.author.guild_permissions.manage_channels):
@@ -407,61 +448,32 @@ class Moderação(commands.Cog):
                 #SlowModeEmbed.set_footer(text=footer)
                 #await canal.edit(slowmode_delay = tempo)
                 #await ctx.send(embed=SlowModeEmbed)
-        
-    @commands.slash_command(description="「🔧 Moderação」Troca o nickname de um membro do seu servidor", options=[Option('membro', 'Membro para ter o nick trocado', OptionType.user, required=True), Option('nick', 'Novo nick do membro.', required=True)])
-    @commands.guild_only()
-    async def changenick(self, ctx, membro, nick):
-        if (not ctx.author.guild_permissions.manage_channels):
-            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não tem permissão para utilizar este comando! Para utilizá-lo, você precisa ter permissão para ``Gerenciar Apelidos``!", timestamp=datetime.datetime.utcnow(), color=red_color)
-            ErrorEmbed.set_footer(text=footer)
-            await ctx.send(embed=ErrorEmbed, ephemeral=True)
-            return
     
-        elif ctx.guild.owner_id == membro.id:
-            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Eu não posso alterar o nick do dono do servidor!", timestamp=datetime.datetime.utcnow(), color=red_color)
-            ErrorEmbed.set_footer(text=footer)
-            await ctx.send(embed=ErrorEmbed, ephemeral=True)
-            return
-        if membro.nick is None:
-            ConfirmEmbed = disnake.Embed(title="Confirmação", description=f"Você tem certeza que deseja atualizar o nickname do membro {membro.mention} para ``{nick}``?", timestamp=datetime.datetime.utcnow(), color=yellow_color)
-            ConfirmEmbed.set_footer(text=footer)
-            view = Confirm(ctx)
-            view.message = await ctx.send(embed=ConfirmEmbed, view=view)
-            await view.wait()
-        else:
-            ConfirmEmbed = disnake.Embed(title="Confirmação", description=f"Você tem certeza que deseja atualizar o nickname do membro {membro.name} de ``{membro.nick}`` para ``{nick}``?", timestamp=datetime.datetime.utcnow(), color=yellow_color)
-            ConfirmEmbed.set_footer(text=footer)
-            view = Confirm(ctx)
-            view.message = await ctx.send(embed=ConfirmEmbed, view=view)
-            await view.wait()
-            msg = await ctx.original_message()
-
-        if view.value is None:
-            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"O tempo foi esgotado.", timestamp=datetime.datetime.utcnow(), color=red_color)
-            ErrorEmbed.set_footer(text=footer)
-            await ctx.send(embed=ErrorEmbed, ephemeral=True)
-            await asyncio.sleep(3)
-            await msg.delete()
-            
-        elif view.value:       
-            if membro.nick is None:
-                nickEmbed = disnake.Embed(title=f'{confirm_emoji} | Nickname alterado! :wrench:', description=f"O nickname de **{membro.name}** foi alterado para ``{nick}``.", timestamp=datetime.datetime.utcnow(), color=green_color)
-                nickEmbed.set_footer(text=footer)
-                await ctx.send(embed=nickEmbed)
-                await membro.edit(nick=nick)
-            else:
-                nickEmbed = disnake.Embed(title=f"{confirm_emoji} | Nickname alterado! :wrench:", description=f"O nickname de {membro.mention} foi alterado de ``{membro.nick}`` para ``{nick}``", timestamp=datetime.datetime.utcnow(), color=green_color)
-                nickEmbed.set_footer(text=footer)
-                await ctx.send(embed=nickEmbed)
-                await membro.edit(nick=nick)
-        else:
-            ErrorEmbed = disnake.Embed(title=f"{confirm_emoji} | Atualização cancelada!", description=f"A atualização de nickname do membro {membro.mention} foi cancelada com sucesso!", timestamp=datetime.datetime.utcnow(), color=green_color)
-            ErrorEmbed.set_footer(text=footer)
-            msg2 = await ctx.channel.send(embed=ErrorEmbed)
-            await asyncio.sleep(10)
-            await msg2.delete()
-            await asyncio.sleep(4)
-            await msg.delete()
+    #@commands.slash_command(description="「🔧 Moderação」Bloqueia um chat", options=[Option('canal', 'Canal para ser bloqueado', OptionType.channel, required=True)])
+    #async def lock(self, ctx, canal):
+        #if (not ctx.author.guild_permissions.manage_channels):
+            #ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"{ctx.author.mention} Você não tem permissão para utilizar este comando! Para utilizá-lo, você precisa ter permissão para ``Gerenciar Canais``!", timestamp=datetime.datetime.utcnow(), color=0xFF0000)
+            #ErrorEmbed.set_footer(text=footer)
+            #await ctx.send(embed=ErrorEmbed)
+            #return
+        #channel = canal or ctx.channel
+        #await channel.set_permissions(channel, create_topics=False, attach_files=False, use_slash_commands=False, send_messages=False)
+        #LockEmbed = disnake.Embed(title="Canal bloqueado! 🔓", description=f"O canal {canal.mention} foi bloqueado por: {ctx.author.mention}", timestamp=datetime.datetime.utcnow(), color=0x00FF00)
+        #LockEmbed.set_footer(text=footer)
+        #await ctx.send(embed=LockEmbed)
+        
+    #@commands.slash_command(description="「🔧 Moderação」Desbloqueia um chat", options=[Option('canal', 'Canal para ser bloqueado', OptionType.channel, required=True)])
+    #async def unlock(self, ctx, canal):
+        #if (not ctx.author.guild_permissions.manage_channels):
+            #ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"{ctx.author.mention} Você não tem permissão para utilizar este comando! Para utilizá-lo, você precisa ter permissão para ``Gerenciar Canais``!", timestamp=datetime.datetime.utcnow(), color=0xFF0000)
+            #ErrorEmbed.set_footer(text=footer)
+            #await ctx.send(embed=ErrorEmbed)
+            #return
+        #channel = canal or ctx.channel
+        #await channel.set_permissions()
+        #UnlockEmbed = disnake.Embed(title="Canal desbloqueado! 🔒", description=f"O canal {canal.mention} foi desbloqueado por: {ctx.author.mention}", timestamp=datetime.datetime.utcnow(), color=0x00FF00)
+        #UnlockEmbed.set_footer(text=footer)
+        #await ctx.send(embed=UnlockEmbed)
 
 def setup(bot):
     bot.add_cog(Moderação(bot))

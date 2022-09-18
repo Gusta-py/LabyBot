@@ -530,26 +530,26 @@ class Economia(commands.Cog):
                 embed = disnake.Embed(timestamp=datetime.datetime.utcnow(), color=interaction.author.color)
                 embed.set_author(icon_url=interaction.author.avatar.url, name=f"Prêmio diário de {interaction.author.name}")
                 embed.add_field(name=f"{manwithmoney_emoji} | Prêmio de hoje:", value=f"``{daily*2}`` LabyCoins")
-                embed.add_field(name=f"{bank_emoji} | Dinheiro no banco:", value=f"``{wallet + daily*2}`` LabyCoins", inline=False)
+                embed.add_field(name=f"{bank_emoji} | Dinheiro no banco:", value=f"``{wallet + daily}`` LabyCoins", inline=False)
                 embed.set_footer(text=footer)
                 await interaction.response.send_message(f"Parabéns, hoje você ganhou ``{daily*2}`` LabyCoins! Você iria ganhar ``{daily}`` LabyCoins, mas meu servidor possui LabyCoins em dobro no daily! O dinheiro foi depositado em seu banco.", embed=embed)
                 return
+            else:
+                sql = ("UPDATE eco SET banco = ? WHERE user_id = ?")
+                val = (wallet + int(daily), interaction.author.id)
+                cursor.execute(sql, val)
 
-            sql = ("UPDATE eco SET banco = ? WHERE user_id = ?")
-            val = (wallet + int(daily), interaction.author.id)
-            cursor.execute(sql, val)
+                embed = disnake.Embed(timestamp=datetime.datetime.utcnow(), color=interaction.author.color)
+                embed.set_author(icon_url=interaction.author.avatar.url, name=f"Prêmio diário de {interaction.author.name}")
+                embed.add_field(name=f"{manwithmoney_emoji} | Prêmio de hoje:", value=f"``{daily}`` LabyCoins")
+                embed.add_field(name=f"{bank_emoji} | Dinheiro no banco:", value=f"``{wallet + daily}`` LabyCoins", inline=False)
+                embed.set_thumbnail(url=interaction.user.avatar.url)
+                embed.set_footer(text=footer)
+                await interaction.response.send_message(f"Parabéns, hoje você ganhou ``{daily}`` LabyCoins! O dinheiro foi depositado em seu banco. Caso queira LabyCoins em dobro, entre no meu servidor utilizando o comando ``/servidor``!", embed=embed)
 
-            embed = disnake.Embed(timestamp=datetime.datetime.utcnow(), color=interaction.author.color)
-            embed.set_author(icon_url=interaction.author.avatar.url, name=f"Prêmio diário de {interaction.author.name}")
-            embed.add_field(name=f"{manwithmoney_emoji} | Prêmio de hoje:", value=f"``{daily}`` LabyCoins")
-            embed.add_field(name=f"{bank_emoji} | Dinheiro no banco:", value=f"``{wallet + daily}`` LabyCoins", inline=False)
-            embed.set_thumbnail(url=interaction.user.avatar.url)
-            embed.set_footer(text=footer)
-            await interaction.response.send_message(f"Parabéns, hoje você ganhou ``{daily}`` LabyCoins! O dinheiro foi depositado em seu banco. Caso queira LabyCoins em dobro, entre no meu servidor utilizando o comando ``/servidor``!", embed=embed)
-
-            db.commit()
-            cursor.close()
-            db.close()
+                db.commit()
+                cursor.close()
+                db.close()
         except Exception as e:
             print(e)
     

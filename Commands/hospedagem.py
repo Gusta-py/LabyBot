@@ -2,12 +2,10 @@ from Config.emojis import error_emoji, confirm_emoji, userinfo_emoji, owner_emoj
 from Config.discloud import api_token, discloud_link, discloudsite_link
 from Config.colors import red_color, blurple_color, white_color, black_color, yellow_color, green_color
 from Config.images import discloudbanner_image, discloudlogo_image
-from translate import Translator
 from disnake.ext import commands
 from Config.bot import footer
 import datetime
 import discloud
-import requests
 import asyncio
 import disnake
 
@@ -96,12 +94,12 @@ class Host(commands.Cog):
 
                 if tem: 
                     v = disnake.ui.View()
-                    item = disnake.ui.Button(style=disnake.ButtonStyle.blurple, label="Terminal completo", emoji=terminal_emoji, url=logs.logs)
+                    item = disnake.ui.Button(style=disnake.ButtonStyle.blurple, label="Terminal completo", emoji=terminal_emoji, url=logs.url)
                     v.add_item(item=item)
 
-                    LogsEmbed = disnake.Embed(title=f"{terminal_emoji} | Últimos 1800 caracteres do terminal:", description=f"```json\n{logs.small_logs}```", timestamp=datetime.datetime.utcnow(), color=black_color)
+                    LogsEmbed = disnake.Embed(title=f"{terminal_emoji} | Últimos 1800 caracteres do terminal:", description=f"```json\n{logs.small}```", timestamp=datetime.datetime.utcnow(), color=black_color)
                     LogsEmbed.set_footer(text=footer)
-                    await interaction.followup.send(embed=LogsEmbed, ephemeral=True)
+                    await interaction.followup.send(embed=LogsEmbed, view=v, ephemeral=True)
                 else:
                     if interaction.guild.id == 892799472478871613:
                         ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não tem o cargo necessário para utilizar esse comando!", timestamp=datetime.datetime.utcnow(), color=red_color)
