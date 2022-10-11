@@ -145,7 +145,7 @@ class DropdownView(disnake.ui.View):
 
     async def interaction_check(self, interaction: disnake.Interaction):
         if interaction.author.mention not in interaction.message.embeds[0].description:
-            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não pode utilizar esse painel! Caso VOCÊ queira jogar comigo, use o comando ``/jokenpo``.", timestamp=datetime.datetime.utcnow(), color=red_color)
+            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não pode utilizar esse painel! Caso VOCÊ queira jogar comigo, use o comando </jokenpo:1011781821727510672>.", timestamp=datetime.datetime.utcnow(), color=red_color)
             ErrorEmbed.set_footer(text=footer)
             await interaction.response.send_message(embed=ErrorEmbed, ephemeral=True)
         else:

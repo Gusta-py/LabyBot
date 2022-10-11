@@ -86,7 +86,7 @@ class DropdownView(disnake.ui.View):
 
     async def interaction_check(self, interaction: disnake.Interaction):
         if interaction.author.mention not in interaction.message.embeds[0].description:
-            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não pode utilizar esse painel! Caso queira trabalhar, use o comando ``/trabalhar``!", timestamp=datetime.datetime.utcnow(), color=red_color)
+            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não pode utilizar esse painel! Caso queira trabalhar, use o comando </trabalhar:1019732046358269984>!", timestamp=datetime.datetime.utcnow(), color=red_color)
             ErrorEmbed.set_footer(text=footer)
             await interaction.response.send_message(embed=ErrorEmbed, ephemeral=True)
         else:
@@ -294,7 +294,7 @@ class Economia(commands.Cog):
                 db.close()
                 return
             else:
-                await ctx.send("Para ver sua conta bancária utilize o comando ``/saldo``.", ephemeral=True)
+                await ctx.send("Para ver sua conta bancária utilize o comando </saldo:1019732045875916875>.", ephemeral=True)
         except Exception as e:
             print(e)
         
@@ -307,7 +307,7 @@ class Economia(commands.Cog):
             bal = cursor.fetchone()
             view = Confirm(ctx=ctx)
             if bal is  None:
-                ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não possui um conta bancária! Por favor, utilize o comando ``/abrir_conta`` caso queira criar uma.", timestamp=datetime.datetime.utcnow(), color=red_color)
+                ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não possui um conta bancária! Por favor, utilize o comando </abrir_conta:1019732045875916873> caso queira criar uma.", timestamp=datetime.datetime.utcnow(), color=red_color)
                 ErrorEmbed.set_footer(text=footer)
                 await ctx.send(embed=ErrorEmbed, ephemeral=True)
                 return
@@ -319,7 +319,7 @@ class Economia(commands.Cog):
                 msg = await ctx.original_message()
 
                 if view.value:
-                    embed = disnake.Embed(description=f"{confirm_emoji} | Sua conta bancária foi deletada com sucesso! Você pode abrir uma nova conta a qualquer momento usando o comando ``/abrir_conta``.", timestamp=datetime.datetime.utcnow(), color=green_color)
+                    embed = disnake.Embed(description=f"{confirm_emoji} | Sua conta bancária foi deletada com sucesso! Você pode abrir uma nova conta a qualquer momento usando o comando </abrir_conta:1019732045875916873>.", timestamp=datetime.datetime.utcnow(), color=green_color)
                     embed.set_author(icon_url=ctx.author.avatar.url, name=ctx.author.name)
                     embed.set_footer(text=footer)
                     await msg.edit(embed=embed, view=None)
@@ -332,7 +332,7 @@ class Economia(commands.Cog):
                     db.close()
                     return
                 else:
-                    await ctx.send("Que bom que você decidiu não apagar sua conta bancária! Mas caso realmente queira apagá-la, basta usar esse comando novamente. (``/deletar_conta``)", ephemeral=True)
+                    await ctx.send("Que bom que você decidiu não apagar sua conta bancária! Mas caso realmente queira apagá-la, basta usar esse comando novamente. (</deletar_conta:1019732045875916874>)", ephemeral=True)
                     await msg.delete()
         except Exception as e:
             print(e)
@@ -367,7 +367,7 @@ class Economia(commands.Cog):
                     await ctx.send(embed=ErrorEmbed, ephemeral=True)
                     return
             if bal is None:
-                ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não possui um conta bancária! Por favor, utilize o comando ``/abrir_conta`` caso queira criar uma.", timestamp=datetime.datetime.utcnow(), color=red_color)
+                ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não possui um conta bancária! Por favor, utilize o comando </abrir_conta:1019732045875916873> caso queira criar uma.", timestamp=datetime.datetime.utcnow(), color=red_color)
                 ErrorEmbed.set_footer(text=footer)
                 await ctx.send(embed=ErrorEmbed, ephemeral=True)
                 return
@@ -394,7 +394,7 @@ class Economia(commands.Cog):
         cursor.execute(f"SELECT * FROM eco WHERE user_id = ?", (ctx.author.id, ))
         data = cursor.fetchone()
         if data is None:
-            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não possui um conta bancária! Por favor, utilize o comando ``/abrir_conta`` caso queira criar uma.", timestamp=datetime.datetime.utcnow(), color=red_color)
+            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não possui um conta bancária! Por favor, utilize o comando </abrir_conta:1019732045875916873> caso queira criar uma.", timestamp=datetime.datetime.utcnow(), color=red_color)
             ErrorEmbed.set_footer(text=footer)
             await ctx.send(embed=ErrorEmbed, ephemeral=True)
             return
@@ -437,7 +437,7 @@ class Economia(commands.Cog):
         cursor.execute(f"SELECT * FROM eco WHERE user_id = ?", (ctx.author.id, ))
         data = cursor.fetchone()
         if data is None:
-            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não possui um conta bancária! Por favor, utilize o comando ``/abrir_conta`` caso queira criar uma.", timestamp=datetime.datetime.utcnow(), color=red_color)
+            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não possui um conta bancária! Por favor, utilize o comando </abrir_conta:1019732045875916873> caso queira criar uma.", timestamp=datetime.datetime.utcnow(), color=red_color)
             ErrorEmbed.set_footer(text=footer)
             await ctx.send(embed=ErrorEmbed, ephemeral=True)
             return
@@ -483,7 +483,7 @@ class Economia(commands.Cog):
             cursor.execute(f"SELECT banco FROM eco WHERE user_id = ?", (interaction.author.id, ))
             wallet = cursor.fetchone()
             if wallet is None:
-                ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não possui um conta bancária! Por favor, utilize o comando ``/abrir_conta`` caso queira criar uma.", timestamp=datetime.datetime.utcnow(), color=red_color)
+                ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não possui um conta bancária! Por favor, utilize o comando </abrir_conta:1019732045875916873> caso queira criar uma.", timestamp=datetime.datetime.utcnow(), color=red_color)
                 ErrorEmbed.set_footer(text=footer)
                 await interaction.response.send_message(embed=ErrorEmbed, ephemeral=True)
                 interaction.application_command.reset_cooldown(interaction)
@@ -513,7 +513,7 @@ class Economia(commands.Cog):
             cursor.execute(f"SELECT banco FROM eco WHERE user_id = ?", (interaction.author.id, ))
             wallet = cursor.fetchone()
             if wallet is None:
-                ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não possui um conta bancária! Por favor, utilize o comando ``/abrir_conta`` caso queira criar uma.", timestamp=datetime.datetime.utcnow(), color=red_color)
+                ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não possui um conta bancária! Por favor, utilize o comando </abrir_conta:1019732045875916873> caso queira criar uma.", timestamp=datetime.datetime.utcnow(), color=red_color)
                 ErrorEmbed.set_footer(text=footer)
                 await interaction.response.send_message(embed=ErrorEmbed, ephemeral=True)
                 interaction.application_command.reset_cooldown(interaction)
@@ -545,7 +545,7 @@ class Economia(commands.Cog):
                 embed.add_field(name=f"{bank_emoji} | Dinheiro no banco:", value=f"``{wallet + daily}`` LabyCoins", inline=False)
                 embed.set_thumbnail(url=interaction.user.avatar.url)
                 embed.set_footer(text=footer)
-                await interaction.response.send_message(f"Parabéns, hoje você ganhou ``{daily}`` LabyCoins! O dinheiro foi depositado em seu banco. Caso queira LabyCoins em dobro, entre no meu servidor utilizando o comando ``/servidor``!", embed=embed)
+                await interaction.response.send_message(f"Parabéns, hoje você ganhou ``{daily}`` LabyCoins! O dinheiro foi depositado em seu banco. Caso queira LabyCoins em dobro, entre no meu servidor utilizando o comando </servidor:1011781821668806670>!", embed=embed)
 
                 db.commit()
                 cursor.close()
@@ -604,7 +604,7 @@ class Economia(commands.Cog):
             data4 = cursor.fetchone()
             
             if data3 is None:
-                ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não possui um conta bancária! Por favor, utilize o comando ``/abrir_conta`` caso queira criar uma.", timestamp=datetime.datetime.utcnow(), color=red_color)
+                ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não possui um conta bancária! Por favor, utilize o comando </abrir_conta:1019732045875916873> caso queira criar uma.", timestamp=datetime.datetime.utcnow(), color=red_color)
                 ErrorEmbed.set_footer(text=footer)
                 await ctx.send(embed=ErrorEmbed, ephemeral=True)
                 ctx.application_command.reset_cooldown(ctx)
@@ -724,7 +724,7 @@ class Economia(commands.Cog):
             data4 = cursor.fetchone()
             
             if data3 is None:
-                ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não possui um conta bancária! Por favor, utilize o comando ``/abrir_conta`` caso queira criar uma.", timestamp=datetime.datetime.utcnow(), color=red_color)
+                ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Você não possui um conta bancária! Por favor, utilize o comando </abrir_conta:1019732045875916873> caso queira criar uma.", timestamp=datetime.datetime.utcnow(), color=red_color)
                 ErrorEmbed.set_footer(text=footer)
                 await ctx.send(embed=ErrorEmbed, ephemeral=True)
                 ctx.application_command.reset_cooldown(ctx)

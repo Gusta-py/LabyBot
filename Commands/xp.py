@@ -51,7 +51,7 @@ class Levels(commands.Cog):
                 embed.add_field(name="Nível:", value=f'{lvl}', inline=True)
                 embed.add_field(name="Rank:", value=f"{rank}/{ctx.guild.member_count}", inline=True)
                 embed.add_field(name="XP Total:", value=f'{stats["xp"]}')
-                embed.add_field(name=f"Progress Bar: [{xp}/{int(200*((1/2)*lvl))}]", value=boxes * ":green_square:" + (20-boxes) * ":white_large_square:",  inline=False)
+                embed.add_field(name=f"Progresso: [{xp}/{int(200*((1/2)*lvl))}]", value=boxes * ":green_square:" + (20-boxes) * ":white_large_square:",  inline=False)
                 embed.set_thumbnail(url=member.avatar.url)
                 embed.set_footer(text=footer)
                 try:

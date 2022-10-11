@@ -49,10 +49,10 @@ class Verificação(commands.Cog):
                 await channel2.send(interaction.author.mention, delete_after=1)
                 await interaction.author.edit(nick=novonick)
 
-                Embed = disnake.Embed(title="Verificado(a) com sucesso!", description=f"Olá {interaction.author.mention}, você acaba de se verificar no meu servidor, caso queira mudar seu nick, use o comando ``/mudar_apelido`` no canal <#937083319819051088>. Espero que faça amigos e se divirta!\n\nAtenciosamente,\nLabyBot.", color=blurple_color)
+                Embed = disnake.Embed(title="Verificado(a) com sucesso!", description=f"Olá {interaction.author.mention}, você acaba de se verificar no meu servidor, caso queira mudar seu nick, use o comando </mudar_apelido:1021036978793349250> no canal <#937083319819051088>. Espero que faça amigos e se divirta!\n\nAtenciosamente,\nLabyBot.", color=blurple_color)
                 await interaction.author.send(embed=Embed)
             except:
-                Embed = disnake.Embed(title="Verificado(a) com sucesso!", description=f"Olá {interaction.author.mention}, você acaba de se verificar no meu servidor, caso queira mudar seu nick, use o comando ``/mudar_apelido`` no canal <#937083319819051088>. Espero que faça amigos e se divirta!\n``Estou enviando essa mensagem aqui pois o seu privado está fechado.``\n\nAtenciosamente,\nLabyBot.", color=blurple_color)
+                Embed = disnake.Embed(title="Verificado(a) com sucesso!", description=f"Olá {interaction.author.mention}, você acaba de se verificar no meu servidor, caso queira mudar seu nick, use o comando </mudar_apelido:1021036978793349250> no canal <#937083319819051088>. Espero que faça amigos e se divirta!\n``Estou enviando essa mensagem aqui pois o seu privado está fechado.``\n\nAtenciosamente,\nLabyBot.", color=blurple_color)
                 await interaction.response.send_message(embed=Embed, ephemeral=True)
         else:
             ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Apenas pessoas que **__NÃO__** são verificadas podem utilizar esse comando!", timestamp=datetime.datetime.utcnow(), color=0xFF0000)

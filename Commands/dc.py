@@ -343,7 +343,7 @@ class Discord(commands.Cog):
             await ctx.send(embed=ErrorEmbed, ephemeral=True)
             return
         if usuário.id == self.bot.user.id:
-            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Infelizmente você não pode dar uma reputação para mim, mas você pode mandar um feedback utilizando o comando ``/feedback``!", timestamp=datetime.datetime.utcnow(), color=red_color)
+            ErrorEmbed = disnake.Embed(title=f"{error_emoji} | Erro!", description=f"Infelizmente você não pode dar uma reputação para mim, mas você pode mandar um feedback utilizando o comando </feedback:1011781821668806668>!", timestamp=datetime.datetime.utcnow(), color=red_color)
             ErrorEmbed.set_footer(text=footer)
             await ctx.send(embed=ErrorEmbed, ephemeral=True)
             return

@@ -16,7 +16,7 @@ class onMessageVerification(commands.Cog):
             else:
                 await message.delete()
             try: 
-                await message.author.send('Você não pode enviar mensagens no canal <#938813191255887872>! Utilize o comando /verificar para se verificar e ter os canais liberados.')
+                await message.author.send('Você não pode enviar mensagens no canal <#938813191255887872>! Utilize o comando </verificar:1021036978847879209> para se verificar e ter os canais liberados.')
             except:
                 pass
   

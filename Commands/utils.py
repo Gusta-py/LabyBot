@@ -177,7 +177,7 @@ async def process_message_as_guess(bot: disnake.Client, message: disnake.Message
         if (embed.author.name != message.author.name):    
             return      
         else:
-            await message.reply(f"Você não pode jogar nesse jogo pois ele foi iniciado por {embed.author.mention}. Inicie um jogo utilizando ``/termo``. ", delete_after=5)
+            await message.reply(f"Você não pode jogar nesse jogo pois ele foi iniciado por {embed.author.mention}. Inicie um jogo utilizando </termo:1011781821668806674>.", delete_after=5)
         try:
             await message.delete(delay=5)
         except Exception:
@@ -185,7 +185,7 @@ async def process_message_as_guess(bot: disnake.Client, message: disnake.Message
         return True
 
     if is_game_over(embed):
-        await message.reply("Esse jogo já acabou. Inicie um novo jogo utilizando ``/termo``.", delete_after=5)
+        await message.reply("Esse jogo já acabou. Inicie um novo jogo utilizando </termo:1011781821668806674>.", delete_after=5)
         try:
             await message.delete(delay=5)
         except Exception:

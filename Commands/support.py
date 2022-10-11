@@ -68,7 +68,7 @@ class Suporte(commands.Cog):
             item3 = disnake.ui.Button(label="Meu website", style=disnake.ButtonStyle.blurple, url=labysite_link)
             view1.add_item(item=item3)
 
-        embed = disnake.Embed(title="Novidades do dia 14/09/2022",description=f'``Novidades do dia 14/09/2022``\n\n{config_emoji} | Um novo sistema de economia foi lançado em versão ``BETA``!\n\n**Caso encontre algum bug, por favor reportar usando o comando ``/bug``.**', timestamp=datetime.datetime.utcnow(), color=green_color)
+        embed = disnake.Embed(title="Novidades do dia 14/09/2022",description=f'``Novidades do dia 14/09/2022``\n\n{config_emoji} | Um novo sistema de economia foi lançado em versão ``BETA``!\n\n**Caso encontre algum bug, por favor reportar usando o comando </bug:1011781821668806667>.**', timestamp=datetime.datetime.utcnow(), color=green_color)
         embed.set_thumbnail(url=self.bot.user.avatar.url)
         embed.set_footer(text=footer)
         await ctx.send(embed=embed, view=view1)
